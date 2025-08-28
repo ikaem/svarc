@@ -1,13 +1,11 @@
-package com.imkaem.android.svarc.costs.presentation.widgets
+package com.imkaem.android.svarc.core.presentation.widgets
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -21,11 +19,12 @@ import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imkaem.android.svarc.ui.theme.ColorGreen
+import com.imkaem.android.svarc.ui.theme.ColorRed
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,18 +65,29 @@ fun HomeScreenCurrentCostsToday(
 //                Text("Spent")
                 TooltipedMetricSubtitle(
                     subtitle = "Spent",
-                    tooltipContent = "Total amount of money spent today."
+                    tooltipContent = "Total amount of money spent today.",
+                    fontSize = 12.sp,
                 )
-                Text("12 EUR")
+                Text(
+                    "12 EUR",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                )
             }
             Spacer(Modifier.width(50.dp))
             Column {
 //                Text("Remainder")
                 TooltipedMetricSubtitle(
                     subtitle = "Remainder",
-                    tooltipContent = "Amount of money left from your daily budget after today's spending."
+                    tooltipContent = "Amount of money left from your daily budget after today's spending.",
+                    fontSize = 12.sp,
                 )
-                Text("-2 EUR")
+                Text(
+                    "-2 EUR",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = ColorRed,
+                    )
             }
         }
     }
@@ -88,7 +98,8 @@ fun HomeScreenCurrentCostsToday(
 private fun TooltipedMetricSubtitle(
     subtitle: String,
     tooltipContent: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    fontSize: TextUnit = 14.sp,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -96,7 +107,7 @@ private fun TooltipedMetricSubtitle(
     ) {
         Text(
             subtitle,
-            fontSize = 14.sp,
+            fontSize = fontSize,
         )
         TooltipBox(
             positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
@@ -112,7 +123,7 @@ private fun TooltipedMetricSubtitle(
                 Icons.Filled.Info,
                 contentDescription = "Accumulated remainder info",
                 modifier = Modifier
-                    .width(20.dp)
+                    .width(18.dp)
                     .padding(start = 5.dp)
             )
         }
