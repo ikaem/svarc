@@ -32,9 +32,6 @@ import com.imkaem.android.svarc.ui.theme.ColorWhite
 fun HomeScreen() {
     val selectedTabIndex = remember() { mutableIntStateOf(1) }
 
-
-
-
     Scaffold { padding ->
         Column(
             modifier = Modifier.padding(padding)
@@ -47,8 +44,6 @@ fun HomeScreen() {
             HorizontalDivider(
                 modifier = Modifier.padding(10.dp)
             )
-
-//            Spacer(Modifier.height(10.dp))
 
             TabRow(
                 /* TODO should use view model for this */
