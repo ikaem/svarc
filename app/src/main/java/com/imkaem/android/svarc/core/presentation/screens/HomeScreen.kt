@@ -32,6 +32,8 @@ import com.imkaem.android.svarc.ui.theme.ColorWhite
 fun HomeScreen() {
     val selectedTabIndex = remember() { mutableIntStateOf(1) }
 
+
+
     Scaffold { padding ->
         Column(
             modifier = Modifier.padding(padding)
