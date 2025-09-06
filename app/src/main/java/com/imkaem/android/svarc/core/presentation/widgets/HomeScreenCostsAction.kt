@@ -1,73 +1,43 @@
-import android.hardware.camera2.params.ColorSpaceTransform
-import androidx.compose.foundation.BorderStroke
+import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.OpenInNew
-import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Category
-import androidx.compose.material.icons.filled.CreditCard
-import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.MenuOpen
-import androidx.compose.material.icons.filled.OpenInNew
-import androidx.compose.material.icons.filled.SelectAll
-import androidx.compose.material.icons.filled.Upload
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
+import com.imkaem.android.svarc.core.presentation.bottom_sheets.EditDailyBudgetBottomSheet
 import com.imkaem.android.svarc.core.presentation.dialogs.PickDateDialog
 import com.imkaem.android.svarc.core.presentation.dialogs.PickTimeDialog
-import com.imkaem.android.svarc.core.presentation.widgets.CustomTextField
 import com.imkaem.android.svarc.core.utils.helpers.DateHelpers
 import com.imkaem.android.svarc.costs.domain.models.CategoryModel
+import com.imkaem.android.svarc.costs.domain.models.PeriodMonthModel
 import com.imkaem.android.svarc.costs.presentation.PickCategoryDialog
-import com.imkaem.android.svarc.ui.theme.ColorBlue
 import com.imkaem.android.svarc.ui.theme.ColorGreyDark
-import com.imkaem.android.svarc.ui.theme.ColorGreyLight
 import com.imkaem.android.svarc.ui.theme.ColorGreyLighter
-import com.imkaem.android.svarc.ui.theme.ColorRed
 import com.imkaem.android.svarc.ui.theme.ColorWhite
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -84,16 +54,24 @@ import kotlin.time.ExperimentalTime
 fun HomeScreenCostsActions(
     modifier: Modifier = Modifier
 ) {
+    val scope = rememberCoroutineScope()
 
+    /* add expense state and stuff ----------*/
     /* add expense bottom sheet stuff -> move to screen, and view model later */
     val addExpenseBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val scope = rememberCoroutineScope()
 
     val currentTime = Calendar.getInstance()
     val nowHour = currentTime.get(Calendar.HOUR_OF_DAY)
     val nowMinute = currentTime.get(Calendar.MINUTE)
 
+    /* amount state */
+    val amountState = remember {
+        mutableStateOf("0.00")
+    }
+
     /* DATE PICKER */
+//    val dateState = rememberDatePickerState()
+
     val dateState = rememberDatePickerState()
     val showDatePickerDialog = remember { mutableStateOf(false) }
 
@@ -117,7 +95,8 @@ fun HomeScreenCostsActions(
                 CategoryModel(3, "Food"),
                 CategoryModel(4, "Social"),
                 CategoryModel(5, "Sport"),
-                CategoryModel(id = 6, "Some longer category name")
+                CategoryModel(id = 6, "Some longer category name"),
+                CategoryModel(7, "Other"),
             )
         )
     }
@@ -139,10 +118,40 @@ fun HomeScreenCostsActions(
         mutableStateOf("")
     }
 
+    /* edit daily budget state */
+    val editDailyBudgetBottomSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+    /* TODO this is temp here */
+    val monthPeriods = listOf(
+        PeriodMonthModel(1, 11, 2023, 323),
+        PeriodMonthModel(2, 12, 2023, 115),
+        PeriodMonthModel(3, 1, 2024, 345),
+        PeriodMonthModel(4, 2, 2024, 459),
+        PeriodMonthModel(5, 3, 2024, 711),
+    )
+
+    val selectedMonthPeriod = remember {
+        mutableStateOf(monthPeriods.last())
+    }
+
+    val selectedMonthPeriodDailyBudget = remember {
+        mutableStateOf<String?>(null)
+//        mutableStateOf(
+//            selectedMonthPeriod.value.amount.let { cents ->
+//                /* TODO extract this formtter, so it can be reused here and in on change? or maybe is not needed becasuse we get string there  */
+//                val euros = cents / 100.00
+//                val formatted = String.format(Locale.getDefault(), "%.2f", euros)
+//                formatted
+//            }
+//        )
+    }
+
 
 
 
     when {
+
         showTimePickerDialog.value -> {
             PickTimeDialog(
                 onDismissRequest = {
@@ -199,263 +208,133 @@ fun HomeScreenCostsActions(
                 newCategoryState.value,
             )
         }
-    }
 
-
-//    when {
-//        addExpenseBottomSheetState.isVisible -> {
-    /* TODO move this to bottom sheets */
-    ModalBottomSheet(
-        shape = RoundedCornerShape(topEnd = 0.dp),
-        dragHandle = {},
-        onDismissRequest = {
-            scope.launch { addExpenseBottomSheetState.hide() }
-        },
-        sheetState = addExpenseBottomSheetState,
-//        modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp)
-
-    ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 10.dp),
-//            horizontalAlignment = Alignment.S
-        ) {
-            Text(
-                "ADD EXPENSE",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(vertical = 10.dp),
-            )
-
-
-            Column(
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
-
-
-                TextField(
-                    value = "",
-                    onValueChange = { /*TODO*/ },
-                    label = { Text("Amount") },
-                    trailingIcon = {
-                        Icon(Icons.Filled.CreditCard, contentDescription = "Amount icon")
-                    },
-                    /* TODO it is stupid that i have to do this individually for each element*/
-                    modifier = Modifier.fillMaxWidth()
-
-                )
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        TextField(
-                            enabled = false,
-                            value = dateState.selectedDateMillis?.let { it ->
-
-                                /* TODO ideally, we would store utc datetime to db*/
-                                val instant = DateHelpers.millisecondsToInstant(it)
-                                val formattedDate =
-                                    DateHelpers.instantToLocalDateFormattedString(instant)
-
-                                formattedDate
-
-//                        } ?: "${nowDay-nowMonth-nowYear}",
-                            } ?: currentTime.timeInMillis.let { it ->
-                                val instant = DateHelpers.millisecondsToInstant(it)
-                                val formattedDate =
-                                    DateHelpers.instantToLocalDateFormattedString(instant)
-
-                                formattedDate
-                            },
-
-                            onValueChange = { /*TODO*/ },
-                            trailingIcon = {
-                                Icon(
-                                    Icons.Filled.CalendarMonth,
-                                    contentDescription = "Select date icon",
-                                )
-                            },
-                            label = { Text("Date") },
-                            modifier = Modifier.clickable {
-                                showDatePickerDialog.value = true
-                            }
-                        )
+        editDailyBudgetBottomSheetState.isVisible -> {
+            EditDailyBudgetBottomSheet(
+                onDismissRequest = {
+                    scope.launch {
+                        editDailyBudgetBottomSheetState.hide()
                     }
-                    Column(
-                        modifier = Modifier.weight(1f)
-
-                    ) {
-
-                        CustomTextField(
-                            readOnly = true,
-                            value = timeState.let {
-                                val hour = timeState.hour
-                                val minute = timeState.minute
-
-                                String.format(
-                                    Locale.getDefault(),
-                                    "%02d:%02d",
-                                    hour,
-                                    minute
-                                )
-                            },
-                            label = { Text("Time") },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Filled.AccessTime,
-                                    contentDescription = "Select time icon",
-                                )
-                            },
-                            trailingIcon = {
-                                Icon(
-                                    Icons.AutoMirrored.Filled.OpenInNew,
-                                    contentDescription = "Open Pick Category icon",
-                                    modifier = Modifier.clickable {
-                                        showTimePickerDialog.value = true
-                                    }
-                                )
-                            },
-                        )
-
-                        /* -------*/
-//                        TextField(
-//                            enabled = false,
-////                        value = "",
-//                            value = timeState.let {
-//                                val hour = timeState.hour
-//                                val minute = timeState.minute
-//
-//                                String.format(
-//                                    Locale.getDefault(),
-//                                    "%02d:%02d",
-//                                    hour,
-//                                    minute
-//                                )
-//                            },
-//                            onValueChange = { /*TODO*/ },
-//                            label = { Text("Time") },
-//                            leadingIcon = {
-//                                Icon(
-//                                    Icons.Filled.AccessTime,
-//                                    contentDescription = "Select time icon",
-//                                )
-//                            },
-//                            trailingIcon = {
-//                                Icon(
-//                                    Icons.AutoMirrored.Filled.OpenInNew,
-//                                    contentDescription = "Open time picker dialog icon",
-//                                    modifier = Modifier
-//                                        .clickable {
-//                                            showCategoryPickerDialog.value = true
-//                                        }
-//                                        .clickable {
-//                                            showTimePickerDialog.value = true
-//                                        }
-//                                )
-//                            },
-////                            modifier = Modifier.clickable {
-////                                showTimePickerDialog.value = true
-////                            }
-//
-//                        )
-                    }
-                }
-
-                CustomTextField(
-                    readOnly = true,
-                    value = selectedCategoryState.value?.name ?: "",
-                    label = { Text("Category") },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Filled.Category,
-                            contentDescription = "Category icon",
-                        )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    trailingIcon = {
-                        Icon(
-                            Icons.AutoMirrored.Filled.OpenInNew,
-                            contentDescription = "Open Pick Category icon",
-                            modifier = Modifier.clickable {
-                                showCategoryPickerDialog.value = true
-                            }
-                        )
-                    },
-                )
-
-                CustomTextField(
-                    value = descriptionState.value,
-                    onValueChange = {
-                        descriptionState.value = it
-                    },
-                    label = { Text("Description") },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Filled.Edit,
-                            contentDescription = "Description icon",
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-
-
-            Column(
+                },
+                sheetState = editDailyBudgetBottomSheetState,
+                onSave = {},
+                onCancel = {},
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 10.dp),
-//                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Button(
-                    onClick = {
-                        scope.launch {
-                            addExpenseBottomSheetState.show()
-                        }
-
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(5.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = ColorBlue
-                    )
-                ) {
-                    Text("Add expense")
-
+                monthPeriods = monthPeriods,
+                selectedMonthPeriod = selectedMonthPeriod.value,
+                onChangeSelectedMonthPeriod = {
+                    selectedMonthPeriod.value = it
+                    /* TODO we want to make sure original period amount is used */
+                    selectedMonthPeriodDailyBudget.value = null
+                },
+                selectedMonthPeriodDailyBudgetValue = selectedMonthPeriodDailyBudget.value,
+                onChangeSelectedMonthPeriodDailyBudgetValue = {
+                    selectedMonthPeriodDailyBudget.value = it
                 }
-                Button(
-                    onClick = {
-                        /* clean all */
-                        selectedCategoryState.value = null
-                        descriptionState.value = ""
-//
-//                        dateState./**/
-
-
-                        /* close the modal */
-                        scope.launch {
-                            addExpenseBottomSheetState.hide()
-                            /* TODO not sure if i should remove the bottom sheet from composition too? */
-
-                        }
-
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(5.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = ColorGreyLight,
-                    )
-                ) {
-                    Text("Cancel", color = ColorGreyDark)
-                }
-
-
-            }
+            )
         }
+
+        addExpenseBottomSheetState.isVisible -> {
+            AddExpenseModalBottomSheet(
+                onDismissRequest = {
+                    scope.launch {
+                        addExpenseBottomSheetState.hide()
+                    }
+                },
+                sheetState = addExpenseBottomSheetState,
+                amountValue = amountState.value,
+                onAmountChange = {
+                    amountState.value = it
+                },
+                dateValue = dateState.selectedDateMillis?.let {
+                    val instant = DateHelpers.millisecondsToInstant((it))
+                    val formattedDate = DateHelpers.instantToLocalDateFormattedString(instant)
+
+                    formattedDate
+                } ?: currentTime.timeInMillis.let {
+                    val instant = DateHelpers.millisecondsToInstant((it))
+                    val formattedDate = DateHelpers.instantToLocalDateFormattedString(instant)
+
+                    formattedDate
+
+                },
+                onOpenDatePicker = {
+                    showDatePickerDialog.value = true
+                },
+                timeValue = timeState.let {
+                    val hour = timeState.hour
+                    val minute = timeState.minute
+
+                    String.format(
+                        Locale.getDefault(),
+                        "%02d:%02d",
+                        hour,
+                        minute
+                    )
+                },
+                onOpenTimePicker = {
+                    showTimePickerDialog.value = true
+                },
+                categoryValue = selectedCategoryState.value?.name
+                    ?: categoriesState.value.last().name,
+                onOpenCategoryPicker = {
+                    showCategoryPickerDialog.value = true
+                },
+                descriptionValue = descriptionState.value,
+                onDescriptionChange = {
+                    descriptionState.value = it
+                },
+                onCancel = {
+                    /* TODO add the expense */
+                    /* clean all */
+                    selectedCategoryState.value = null
+                    descriptionState.value = ""
+                    amountState.value = "0.00"
+//                    dateState = null
+                },
+                onSave = {
+                    /* clean all */
+                    selectedCategoryState.value = null
+                    descriptionState.value = ""
+                    amountState.value = "0.00"
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp),
+
+                )
+        }
+
+
     }
+
+    /* just placeholder */
+//    EditDailyBudgetBottomSheet(
+//        onDismissRequest = {
+//            scope.launch {
+//                editDailyBudgetBottomSheetState.hide()
+//            }
+//        },
+//        sheetState = editDailyBudgetBottomSheetState,
+//        onSave = {},
+//        onCancel = {},
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(vertical = 10.dp),
+//        monthPeriods = monthPeriods,
+//        selectedMonthPeriod = selectedMonthPeriod.value,
+//        onChangeSelectedMonthPeriod = {
+//            selectedMonthPeriod.value = it
+//        },
+//        selectedMonthPeriodDailyBudgetValue = selectedMonthPeriodDailyBudget.value,
+//        onChangeSelectedMonthPeriodDailyBudgetValue = {
+//            selectedMonthPeriodDailyBudget.value = it
 //        }
-//    }
+//    )
+
+    /* ------- */
 
     Row(
         modifier = modifier
@@ -467,6 +346,9 @@ fun HomeScreenCostsActions(
             modifier = Modifier
                 .weight(1f)
                 .clickable {
+                    scope.launch {
+                        editDailyBudgetBottomSheetState.show()
+                    }
                 }
         ) {
             Text(
@@ -536,16 +418,5 @@ private fun CostsAction(
     ) {
 
         content()
-//        Text(
-//
-//            "10 EUR",
-//            fontSize = 24.sp,
-//            fontWeight = FontWeight.Bold
-//        )
-//        Text(
-//            "Edit daily budget",
-//            fontSize = 10.sp,
-//            color = ColorGreyDark,
-//        )
     }
 }
