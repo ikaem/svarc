@@ -14,7 +14,12 @@ fun HomeScreenCurrentCosts() {
     ) {
         HomeScreenCurrentCostsToday(
             modifier = Modifier
-                .padding(top = 20.dp, start = 10.dp, end = 10.dp, bottom = 40.dp)
+                .padding(
+                    top = 20.dp,
+                    start = 10.dp,
+                    end = 10.dp,
+                    bottom = 40.dp
+                )
                 .fillMaxWidth()
         )
         HomeScreenCurrentCostsPeriod(

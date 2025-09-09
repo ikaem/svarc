@@ -3,6 +3,7 @@ package com.imkaem.android.svarc.ui.theme
 import androidx.compose.ui.graphics.Color
 
 /* TODO this should be integrated into theme eventually */
+val ColorGreyLighterEr = Color(0xFFEDEDED)
 val ColorGreyLighter = Color(0xFFD7D7D7)
 val ColorGreyLight = Color(0xFFAFAFAF)
 val ColorGrey = Color(0xFF797979)

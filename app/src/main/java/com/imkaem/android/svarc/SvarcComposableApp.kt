@@ -4,12 +4,22 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.imkaem.android.svarc.core.presentation.screens.HomeScreen
+import com.imkaem.android.svarc.costs.presentation.screens.ReportsScreen
 
 @Composable
 fun SvarcComposableApp(
 ) {
 
     val navController: NavHostController = rememberNavController()
+
+
+    fun onNavigateBack() {
+        navController.popBackStack()
+    }
+
+    fun onNavigateToReports() {
+        navController.navigate("reports")
+    }
 
     NavHost(
         startDestination = "home",
@@ -18,8 +28,22 @@ fun SvarcComposableApp(
         composable(
             route = "home",
         ) {
-            HomeScreen()
+            HomeScreen(
+                onNavigateToReports = ::onNavigateToReports,
+            )
         }
+
+        composable(
+            route = "reports",
+        ) {
+
+            ReportsScreen(
+                onNavigateBack = ::onNavigateBack,
+            )
+
+        }
+
+
     }
 
 

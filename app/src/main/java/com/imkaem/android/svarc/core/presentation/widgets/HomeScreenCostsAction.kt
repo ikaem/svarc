@@ -49,9 +49,12 @@ import kotlin.time.ExperimentalTime
 *https://medium.com/javarevisited/why-you-shouldnt-use-localdatetime-to-avoid-production-issues-d2833fc7df41 
 * */
 
+
+/* TODO this needs splitting into more atomic widgets */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class)
 @Composable
 fun HomeScreenCostsActions(
+    onNavigateToReports: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
@@ -137,19 +140,10 @@ fun HomeScreenCostsActions(
 
     val selectedMonthPeriodDailyBudget = remember {
         mutableStateOf<String?>(null)
-//        mutableStateOf(
-//            selectedMonthPeriod.value.amount.let { cents ->
-//                /* TODO extract this formtter, so it can be reused here and in on change? or maybe is not needed becasuse we get string there  */
-//                val euros = cents / 100.00
-//                val formatted = String.format(Locale.getDefault(), "%.2f", euros)
-//                formatted
-//            }
-//        )
     }
 
 
-
-
+    /* TODO this should be extracted somehow, so it does not pollute this */
     when {
 
         showTimePickerDialog.value -> {
@@ -306,35 +300,7 @@ fun HomeScreenCostsActions(
 
                 )
         }
-
-
     }
-
-    /* just placeholder */
-//    EditDailyBudgetBottomSheet(
-//        onDismissRequest = {
-//            scope.launch {
-//                editDailyBudgetBottomSheetState.hide()
-//            }
-//        },
-//        sheetState = editDailyBudgetBottomSheetState,
-//        onSave = {},
-//        onCancel = {},
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(vertical = 10.dp),
-//        monthPeriods = monthPeriods,
-//        selectedMonthPeriod = selectedMonthPeriod.value,
-//        onChangeSelectedMonthPeriod = {
-//            selectedMonthPeriod.value = it
-//        },
-//        selectedMonthPeriodDailyBudgetValue = selectedMonthPeriodDailyBudget.value,
-//        onChangeSelectedMonthPeriodDailyBudgetValue = {
-//            selectedMonthPeriodDailyBudget.value = it
-//        }
-//    )
-
-    /* ------- */
 
     Row(
         modifier = modifier
@@ -363,16 +329,19 @@ fun HomeScreenCostsActions(
             )
         }
         CostsAction(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f).clickable {
+//                Log.d("HomeScreen", "Navigate to reports")
+                onNavigateToReports()
+            }
         ) {
             Icon(
                 Icons.Filled.BarChart,
-                contentDescription = "Balance report icon",
+                contentDescription = "Report icon",
                 modifier = Modifier.size(30.dp)
 
             )
             Text(
-                "Balance report",
+                "Reports",
                 fontSize = 10.sp,
                 color = ColorGreyDark,
             )
