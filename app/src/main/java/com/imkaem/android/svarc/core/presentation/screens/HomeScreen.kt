@@ -3,7 +3,6 @@ package com.imkaem.android.svarc.core.presentation.screens
 import CustomTabbedView
 import HomeScreenCostsActions
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold

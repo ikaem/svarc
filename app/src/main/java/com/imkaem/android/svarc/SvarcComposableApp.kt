@@ -4,7 +4,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.imkaem.android.svarc.core.presentation.screens.HomeScreen
-import com.imkaem.android.svarc.costs.presentation.screens.ReportsScreen
+import com.imkaem.android.svarc.reports.presentation.screens.ReportsScreen
 
 @Composable
 fun SvarcComposableApp(
