@@ -4,11 +4,18 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    /* room */
+    alias(libs.plugins.room)
+    alias(libs.plugins.devtools.ksp)
 }
 
 android {
     namespace = "com.imkaem.android.svarc"
     compileSdk = 36
+
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
 
     defaultConfig {
         applicationId = "com.imkaem.android.svarc"
@@ -47,11 +54,14 @@ android {
 }
 
 dependencies {
+    /* room */
+    ksp(libs.room.compiler)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
     /* navigation */
     implementation(libs.navigation.compose)
     /* material icons extended */
     implementation(libs.material.icons.extended)
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
