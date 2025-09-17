@@ -11,6 +11,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenViewModel
 import com.imkaem.android.svarc.core.presentation.widgets.HomeScreenAllCosts
 import com.imkaem.android.svarc.core.presentation.widgets.HomeScreenCurrentCosts
 
@@ -18,7 +21,8 @@ import com.imkaem.android.svarc.core.presentation.widgets.HomeScreenCurrentCosts
 fun HomeScreen(
     onNavigateToReports: () -> Unit,
 ) {
-    val selectedTabIndex = remember { mutableIntStateOf(0) }
+    val viewModel: HomeScreenViewModel = viewModel()
+    val state = viewModel.state.collectAsStateWithLifecycle().value
 
     Scaffold { padding ->
         Column(
@@ -35,8 +39,8 @@ fun HomeScreen(
             )
 
             CustomTabbedView(
-                currentTabIndex = selectedTabIndex.intValue,
-                onTabSelected = { index -> selectedTabIndex.intValue = index },
+                currentTabIndex = state.selectedTab.index,
+                onTabSelected = viewModel::onChangeSelectedTabIndex,
                 tabLabels = listOf("Current", "All expenses"),
                 tabs = listOf(
                     { HomeScreenCurrentCosts() },

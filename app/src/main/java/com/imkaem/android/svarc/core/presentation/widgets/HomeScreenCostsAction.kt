@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import com.imkaem.android.svarc.core.presentation.bottom_sheets.EditDailyBudgetBottomSheet
 import com.imkaem.android.svarc.core.presentation.dialogs.PickDateDialog
 import com.imkaem.android.svarc.core.presentation.dialogs.PickTimeDialog
+import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.AddExpenseState
 import com.imkaem.android.svarc.core.utils.helpers.DateHelpers
 import com.imkaem.android.svarc.costs.domain.models.CategoryModel
 import com.imkaem.android.svarc.costs.domain.models.PeriodMonthModel
@@ -54,7 +55,10 @@ import kotlin.time.ExperimentalTime
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class)
 @Composable
 fun HomeScreenCostsActions(
+    addExpenseState: AddExpenseState,
     onNavigateToReports: () -> Unit,
+    /* TODO i guess it would be better to use that events type on callbacks, because it would be less arguments passed here */
+    onChangeAddExpenseAmount: (amount: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
