@@ -7,12 +7,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenChangeTabEvent
 import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenViewModel
 import com.imkaem.android.svarc.core.presentation.widgets.HomeScreenAllCosts
 import com.imkaem.android.svarc.core.presentation.widgets.HomeScreenCurrentCosts
@@ -30,7 +29,12 @@ fun HomeScreen(
         ) {
 
             HomeScreenCostsActions(
-                onNavigateToReports,
+                addExpenseState = state.addExpenseState,
+                addCategoryState = state.addCategoryState,
+                categoriesState = state.categoriesState,
+                onNavigateToReports = onNavigateToReports,
+                onAddExpenseEvent = viewModel::onEvent,
+                onAddCategoryEvent = viewModel::onEvent,
                 modifier = Modifier.padding(horizontal = 10.dp)
             )
 
@@ -40,7 +44,9 @@ fun HomeScreen(
 
             CustomTabbedView(
                 currentTabIndex = state.selectedTab.index,
-                onTabSelected = viewModel::onChangeSelectedTabIndex,
+                onTabSelected = { it ->
+                    viewModel.onEvent(HomeScreenChangeTabEvent.ChangeTab(it))
+                },
                 tabLabels = listOf("Current", "All expenses"),
                 tabs = listOf(
                     { HomeScreenCurrentCosts() },

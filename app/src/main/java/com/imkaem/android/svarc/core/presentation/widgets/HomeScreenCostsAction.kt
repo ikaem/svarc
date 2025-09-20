@@ -1,4 +1,3 @@
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +18,6 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -32,9 +30,12 @@ import androidx.compose.ui.unit.sp
 import com.imkaem.android.svarc.core.presentation.bottom_sheets.EditDailyBudgetBottomSheet
 import com.imkaem.android.svarc.core.presentation.dialogs.PickDateDialog
 import com.imkaem.android.svarc.core.presentation.dialogs.PickTimeDialog
-import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.AddExpenseState
+import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenAddCategoryEvent
+import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenAddCategoryState
+import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenAddExpenseEvent
+import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenAddExpenseState
+import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenCategoriesState
 import com.imkaem.android.svarc.core.utils.helpers.DateHelpers
-import com.imkaem.android.svarc.costs.domain.models.CategoryModel
 import com.imkaem.android.svarc.costs.domain.models.PeriodMonthModel
 import com.imkaem.android.svarc.costs.presentation.PickCategoryDialog
 import com.imkaem.android.svarc.ui.theme.ColorGreyDark
@@ -55,10 +56,14 @@ import kotlin.time.ExperimentalTime
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class)
 @Composable
 fun HomeScreenCostsActions(
-    addExpenseState: AddExpenseState,
+    addExpenseState: HomeScreenAddExpenseState,
+    addCategoryState: HomeScreenAddCategoryState,
+    categoriesState: HomeScreenCategoriesState,
     onNavigateToReports: () -> Unit,
+    onAddExpenseEvent: (HomeScreenAddExpenseEvent) -> Unit,
+    onAddCategoryEvent: (HomeScreenAddCategoryEvent) -> Unit,
     /* TODO i guess it would be better to use that events type on callbacks, because it would be less arguments passed here */
-    onChangeAddExpenseAmount: (amount: String) -> Unit,
+//    onChangeAddExpenseAmount: (amount: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
@@ -94,27 +99,27 @@ fun HomeScreenCostsActions(
 
     /* category picker */
     /* these will be held in view model, and categories stored and taken from database */
-    val categoriesState = remember {
-        mutableStateOf(
-            listOf<CategoryModel>(
-                CategoryModel(1, "Health"),
-                CategoryModel(2, "Home"),
-                CategoryModel(3, "Food"),
-                CategoryModel(4, "Social"),
-                CategoryModel(5, "Sport"),
-                CategoryModel(id = 6, "Some longer category name"),
-                CategoryModel(7, "Other"),
-            )
-        )
-    }
+//    val oldCategoriesState = remember {
+//        mutableStateOf(
+//            listOf<CategoryModel>(
+//                CategoryModel(1, "Health"),
+//                CategoryModel(2, "Home"),
+//                CategoryModel(3, "Food"),
+//                CategoryModel(4, "Social"),
+//                CategoryModel(5, "Sport"),
+//                CategoryModel(id = 6, "Some longer category name"),
+//                CategoryModel(7, "Other"),
+//            )
+//        )
+//    }
     val newCategoryState = remember {
         mutableStateOf("")
     }
 
     /* TODO i guess this will be populated, in view model, with sme category models */
-    val selectedCategoryState = remember {
-        mutableStateOf<CategoryModel?>(null)
-    }
+//    val selectedCategoryState = remember {
+//        mutableStateOf<CategoryModel?>(null)
+//    }
     val showCategoryPickerDialog = remember {
         mutableStateOf(false)
     }
@@ -173,37 +178,57 @@ fun HomeScreenCostsActions(
                 onDismissRequest = {
                     showCategoryPickerDialog.value = false
                 },
-                onSelectCategory = {
-                    selectedCategoryState.value = it
+                onSelectCategory = { it ->
+//                    selectedCategoryState.value = it
+                    onAddExpenseEvent(
+                        HomeScreenAddExpenseEvent.UpdateCategory(it.id),
+                    )
                 },
                 onNewCategoryNameChange = {
-                    newCategoryState.value = it
+//                    newCategoryState.value = it
+                    onAddCategoryEvent(
+                        HomeScreenAddCategoryEvent.UpdateName(it)
+                    )
                 },
                 onNewCategoryAdd = {
-                    val trimmed = newCategoryState.value.trim()
-                    if (trimmed.isEmpty()) {
-                        return@PickCategoryDialog
-                    }
+                    onAddCategoryEvent(
+                        HomeScreenAddCategoryEvent.SubmitCategory
+                    )
 
-                    val existingCategory = categoriesState.value.find { i ->
-                        i.name.equals(trimmed, ignoreCase = true)
-                    }
-                    if (existingCategory != null) {
-                        return@PickCategoryDialog
-                    }
-
-                    val newId = (categoriesState.value.maxOfOrNull { it.id } ?: 0) + 1
-                    val newCategory = CategoryModel(newId, trimmed)
-
-                    val updatedList = categoriesState.value.toMutableList()
-                    updatedList.add(newCategory)
-
-                    categoriesState.value = updatedList.toList()
-                    newCategoryState.value = ""
+//                    val trimmed = newCategoryState.value.trim()
+//                    if (trimmed.isEmpty()) {
+//                        return@PickCategoryDialog
+//                    }
+//
+//                    val existingCategory = oldCategoriesState.value.find { i ->
+//                        i.name.equals(trimmed, ignoreCase = true)
+//                    }
+//                    if (existingCategory != null) {
+//                        return@PickCategoryDialog
+//                    }
+//
+//                    val newId = (oldCategoriesState.value.maxOfOrNull { it.id } ?: 0) + 1
+//                    val newCategory = CategoryModel(newId, trimmed)
+//
+//                    val updatedList = oldCategoriesState.value.toMutableList()
+//                    updatedList.add(newCategory)
+//
+//                    oldCategoriesState.value = updatedList.toList()
+//                    newCategoryState.value = ""
                 },
-                selectedCategory = selectedCategoryState.value,
-                categories = categoriesState.value,
-                newCategoryState.value,
+//                selectedCategory = selectedCategoryState.value,
+                selectedCategory = run {
+                    val selectedId = addExpenseState.data.categoryId
+                    val selectedCategory =
+                        categoriesState.categories.firstOrNull { it.id == selectedId }
+                    selectedCategory
+
+                },
+                categories = categoriesState.categories,
+                newCategoryName = addCategoryState.data.name,
+//                newCategoryName = categoriesState.
+//                categories = oldCategoriesState.value,
+//                newCategoryState.value,
             )
         }
 
@@ -242,9 +267,11 @@ fun HomeScreenCostsActions(
                     }
                 },
                 sheetState = addExpenseBottomSheetState,
-                amountValue = amountState.value,
+//                amountValue = amountState.value,
+                amountValue = addExpenseState.data.amount,
                 onAmountChange = {
-                    amountState.value = it
+//                    amountState.value = it
+                    onAddExpenseEvent(HomeScreenAddExpenseEvent.UpdateAmount(it))
                 },
                 dateValue = dateState.selectedDateMillis?.let {
                     val instant = DateHelpers.millisecondsToInstant((it))
@@ -275,28 +302,37 @@ fun HomeScreenCostsActions(
                 onOpenTimePicker = {
                     showTimePickerDialog.value = true
                 },
-                categoryValue = selectedCategoryState.value?.name
-                    ?: categoriesState.value.last().name,
+//                categoryValue = selectedCategoryState.value?.name
+//                    ?: oldCategoriesState.value.last().name,
+                categoryValue = addExpenseState.data.categoryId?.let { categoryId ->
+                    val categoryName =
+                        categoriesState.categories.firstOrNull { category -> category.id == categoryId }
+                    categoryName?.name
+                } ?: "Unknown",
                 onOpenCategoryPicker = {
                     showCategoryPickerDialog.value = true
                 },
                 descriptionValue = descriptionState.value,
                 onDescriptionChange = {
-                    descriptionState.value = it
+//                    descriptionState.value = it
+                    onAddExpenseEvent(HomeScreenAddExpenseEvent.UpdateDescription(it))
                 },
                 onCancel = {
                     /* TODO add the expense */
                     /* clean all */
-                    selectedCategoryState.value = null
-                    descriptionState.value = ""
-                    amountState.value = "0.00"
+                    onAddExpenseEvent
+//                    selectedCategoryState.value = null
+//                    descriptionState.value = ""
+//                    amountState.value = "0.00"
 //                    dateState = null
                 },
                 onSave = {
+
+                    /* TODO not really sure what to do here yet */
                     /* clean all */
-                    selectedCategoryState.value = null
-                    descriptionState.value = ""
-                    amountState.value = "0.00"
+//                    selectedCategoryState.value = null
+//                    descriptionState.value = ""
+//                    amountState.value = "0.00"
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -333,10 +369,12 @@ fun HomeScreenCostsActions(
             )
         }
         CostsAction(
-            modifier = Modifier.weight(1f).clickable {
+            modifier = Modifier
+                .weight(1f)
+                .clickable {
 //                Log.d("HomeScreen", "Navigate to reports")
-                onNavigateToReports()
-            }
+                    onNavigateToReports()
+                }
         ) {
             Icon(
                 Icons.Filled.BarChart,
