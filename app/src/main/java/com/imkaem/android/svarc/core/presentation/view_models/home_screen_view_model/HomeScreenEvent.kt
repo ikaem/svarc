@@ -32,6 +32,13 @@ sealed class HomeScreenAddExpenseEvent : HomeScreenEvent() {
     object SubmitExpense : HomeScreenAddExpenseEvent()
 }
 
+
+sealed class HomeScreenEditDailyBudgetEvent: HomeScreenEvent() {
+    data class SelectMonthPeriod(val periodId: Int): HomeScreenEditDailyBudgetEvent()
+    data class UpdateBudgetAmount(val amount: String): HomeScreenEditDailyBudgetEvent()
+    object SubmitBudget: HomeScreenEditDailyBudgetEvent()
+}
+
 /* and additional sealed classes to
 * edit month's daily budget
 * open dialogs and bottom sheets

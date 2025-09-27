@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imkaem.android.svarc.costs.domain.models.CategoryModel
 import com.imkaem.android.svarc.costs.domain.models.ExpenseModel
+import com.imkaem.android.svarc.costs.domain.models.PeriodMonthModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,6 +34,21 @@ class HomeScreenViewModel : ViewModel() {
             is HomeScreenChangeTabEvent -> handleChangeTabEvent(event)
             is HomeScreenAddCategoryEvent -> handleAddCategoryEvent(event)
             is HomeScreenToggleDialogEvent -> handleToggleDialogEvent(event)
+            is HomeScreenEditDailyBudgetEvent -> handleEditDailyBudgetEvent(event)
+        }
+    }
+
+    private fun handleEditDailyBudgetEvent(event: HomeScreenEditDailyBudgetEvent) {
+        when (event) {
+            is HomeScreenEditDailyBudgetEvent.SelectMonthPeriod -> onEditDailyBudgetSelectMonthPeriod(
+                event.periodId
+            )
+
+            is HomeScreenEditDailyBudgetEvent.UpdateBudgetAmount -> onEditDailyBudgetChangeAmount(
+                event.amount
+            )
+
+            is HomeScreenEditDailyBudgetEvent.SubmitBudget -> onEditDailyBudgetSubmit()
         }
     }
 
@@ -60,6 +76,7 @@ class HomeScreenViewModel : ViewModel() {
             is HomeScreenAddExpenseEvent.UpdateCategory -> onAddExpenseChangeCategory(
                 event.categoryId,
             )
+
             is HomeScreenAddExpenseEvent.UpdateDescription -> onAddExpenseChangeDescription(event.description)
             is HomeScreenAddExpenseEvent.UpdateDate -> TODO()
             is HomeScreenAddExpenseEvent.UpdateTime -> TODO()
@@ -201,6 +218,7 @@ class HomeScreenViewModel : ViewModel() {
     }
 
     private fun onAddExpenseChangeCategory(categoryId: Int) {
+        /*TODO maybe category should be full category, so we dont have to search for it in the actual composable? like with month periods?  */
         val newState = _state.value.copy(
             addExpenseState = _state.value.addExpenseState.copy(
                 data = _state.value.addExpenseState.data.copy(
@@ -225,6 +243,98 @@ class HomeScreenViewModel : ViewModel() {
 
         _state.update {
             newState
+        }
+    }
+
+    private fun onEditDailyBudgetChangeAmount(amount: String) {
+        val newState = _state.value.copy(
+            editDailyBudgetState = _state.value.editDailyBudgetState.copy(
+                data = _state.value.editDailyBudgetState.data.copy(
+                    selectedMonthPeriodDailyBudgetValue = amount,
+                )
+            )
+        )
+
+        _state.update {
+            newState
+        }
+    }
+
+    private fun onEditDailyBudgetSelectMonthPeriod(periodId: Int) {
+        /* TODO maybe we could have another state, or field in this state, that says ... i dont know, something to keep full selectedMonthPeriod maybe? */
+
+
+        val monthPeriods = _state.value.monthPeriodsState.periods
+        val period = monthPeriods.firstOrNull { it.id == periodId }
+
+        val newState = _state.value.copy(
+            editDailyBudgetState = _state.value.editDailyBudgetState.copy(
+                data = _state.value.editDailyBudgetState.data.copy(
+                    selectedMonthPeriod = period,
+                    selectedMonthPeriodDailyBudgetValue = period?.amount.toString(),
+                )
+            )
+        )
+
+        _state.update {
+            newState
+        }
+    }
+
+    private fun onEditDailyBudgetSubmit() {
+        /* TODO this needs to add error handling and pass specific dispatcher */
+
+        val periodId = _state.value.editDailyBudgetState.data.selectedMonthPeriod?.id
+            ?: return
+
+        val amount = _state.value.editDailyBudgetState.data.selectedMonthPeriodDailyBudgetValue
+        val trimmed = amount?.trim()
+        if (trimmed.isNullOrEmpty()) {
+            return
+        }
+
+        viewModelScope.launch {
+            /* TODO at this point si guess update to loading
+            *   this means that initial state should be non-loading */
+
+            try {
+
+                val updatedMonthPeriods = dummyEditDailyBudgetUseCase(
+                    periodId = periodId,
+                    amount = trimmed,
+                )
+
+                /* TODFO this will be removed once real use case is used, because we will have a flow retreiving month periods */
+
+                val updatedMonthPeriodsState = _state.value.monthPeriodsState.copy(
+                    periods = updatedMonthPeriods,
+                    isLoading = false,
+                    error = null,
+                )
+
+                val newState = _state.value.copy(
+                    monthPeriodsState = updatedMonthPeriodsState,
+                )
+
+                _state.update {
+                    newState
+                }
+
+            } catch (e: Exception) {
+                val editDailyBudgetState = HomeScreenEditDailyBudgetState(
+                    data = _state.value.editDailyBudgetState.data,
+                    isLoading = false,
+                    error = e.message,
+                )
+
+                val newState = _state.value.copy(
+                    editDailyBudgetState = editDailyBudgetState
+                )
+
+                _state.update {
+                    newState
+                }
+            }
         }
     }
 
@@ -273,7 +383,20 @@ class HomeScreenViewModel : ViewModel() {
             ),
             categoryPickerDialogState = HomeScreenCategoryPickerDialogState(
                 isShown = false,
-            )
+            ),
+            editDailyBudgetState = HomeScreenEditDailyBudgetState(
+                data = HomeScreenEditDailyBudgetStateData(
+                    selectedMonthPeriod = null,
+                    selectedMonthPeriodDailyBudgetValue = null,
+                ),
+                isLoading = false,
+                error = null,
+            ),
+            monthPeriodsState = HomeScreenMonthPeriodsState(
+                periods = emptyList(),
+                isLoading = false,
+                error = null,
+            ),
         )
     }
 
@@ -301,6 +424,7 @@ class HomeScreenViewModel : ViewModel() {
         /* TODO this should be separated i guess, as per comment and link at the top of this file */
         val categories = dummyGetCategoriesUseCase()
         val expenses = dummyGetExpensesUseCase()
+        val monthPeriods = dummyGetMonthPeriodsUseCase()
 
         val categoriesState = HomeScreenCategoriesState(
             categories = categories,
@@ -310,6 +434,12 @@ class HomeScreenViewModel : ViewModel() {
 
         val expensesState = HomeScreenExpensesState(
             expenses = expenses,
+            isLoading = false,
+            error = null,
+        )
+
+        val monthPeriodsState = HomeScreenMonthPeriodsState(
+            periods = monthPeriods,
             isLoading = false,
             error = null,
         )
@@ -338,6 +468,15 @@ class HomeScreenViewModel : ViewModel() {
             error = null,
         )
 
+        val editDailyBudgetState = HomeScreenEditDailyBudgetState(
+            data = HomeScreenEditDailyBudgetStateData(
+                selectedMonthPeriod = monthPeriods.lastOrNull(),
+                selectedMonthPeriodDailyBudgetValue = monthPeriods.lastOrNull()?.amount.toString(),
+            ),
+            isLoading = false,
+            error = null,
+        )
+
         val selectedTab = _state.value.selectedTab
         val timePickerDialogState = _state.value.timePickerDialogState
         val datePickerDialogState = _state.value.datePickerDialogState
@@ -347,8 +486,10 @@ class HomeScreenViewModel : ViewModel() {
         val newState = _state.value.copy(
             expensesState = expensesState,
             categoriesState = categoriesState,
+            monthPeriodsState = monthPeriodsState,
             addExpenseState = addExpensesState,
             addCategoryState = addCategoryState,
+            editDailyBudgetState = editDailyBudgetState,
             selectedTab = selectedTab,
             timePickerDialogState = timePickerDialogState,
             datePickerDialogState = datePickerDialogState,
@@ -361,6 +502,20 @@ class HomeScreenViewModel : ViewModel() {
     }
 
     /* TODO dummy use cases - will be delegated to real stuff later */
+
+    private suspend fun dummyGetMonthPeriodsUseCase(): List<PeriodMonthModel> {
+        val monthPeriods = listOf(
+            PeriodMonthModel(1, 11, 2023, 323),
+            PeriodMonthModel(2, 12, 2023, 115),
+            PeriodMonthModel(3, 1, 2024, 345),
+            PeriodMonthModel(4, 2, 2024, 459),
+            PeriodMonthModel(5, 3, 2024, 711),
+        )
+
+        delay(1000)
+        return monthPeriods
+    }
+
     private suspend fun dummyGetCategoriesUseCase(): List<CategoryModel> {
         /* TODO this will be a flow when real implementation arrives */
         val categories = listOf<CategoryModel>(
@@ -453,7 +608,36 @@ class HomeScreenViewModel : ViewModel() {
             name = name,
         )
 
+        /* TODO this should probably return all categories, so that view model does not need to do it - but it is dummy stuff anyway...*/
         return newCategory
+    }
+
+    /* TODO temp */
+    private suspend fun dummyEditDailyBudgetUseCase(
+        periodId: Int,
+        amount: String,
+    ): List<PeriodMonthModel> {
+
+        val periods = _state.value.monthPeriodsState.periods
+
+        val period = periods.firstOrNull { it.id == periodId } ?: return periods
+
+        delay(1000)
+
+        /* TODO not we have to replace existing period - this will all be done by database later */
+        val updatedPeriods = periods.map { it ->
+            if (it.id != period.id) {
+                return@map it
+            }
+
+            val updated = it.copy(
+                amount = amount.toInt()
+            )
+
+            updated
+        }
+
+        return updatedPeriods
     }
 }
 

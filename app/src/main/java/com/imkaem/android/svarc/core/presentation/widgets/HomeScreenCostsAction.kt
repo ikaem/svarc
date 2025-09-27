@@ -37,6 +37,9 @@ import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_m
 import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenCategoriesState
 import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenCategoryPickerDialogState
 import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenDatePickerDialogState
+import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenEditDailyBudgetEvent
+import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenEditDailyBudgetState
+import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenMonthPeriodsState
 import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenToggleDialogEvent
 import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenTimePickerDialogState
 import com.imkaem.android.svarc.core.utils.helpers.DateHelpers
@@ -62,13 +65,16 @@ import kotlin.time.ExperimentalTime
 fun HomeScreenCostsActions(
     addExpenseState: HomeScreenAddExpenseState,
     addCategoryState: HomeScreenAddCategoryState,
+    editDailyBudgetState: HomeScreenEditDailyBudgetState,
     categoriesState: HomeScreenCategoriesState,
+    monthPeriodsState: HomeScreenMonthPeriodsState,
     datePickerDialogState: HomeScreenDatePickerDialogState,
     timePickerDialogState: HomeScreenTimePickerDialogState,
     categoryPickerDialogState: HomeScreenCategoryPickerDialogState,
     onNavigateToReports: () -> Unit,
     onAddExpenseEvent: (HomeScreenAddExpenseEvent) -> Unit,
     onAddCategoryEvent: (HomeScreenAddCategoryEvent) -> Unit,
+    onEditDailyBudgetEvent: (HomeScreenEditDailyBudgetEvent) -> Unit,
     onToggleDialogEvent: (HomeScreenToggleDialogEvent) -> Unit,
     /* TODO i guess it would be better to use that events type on callbacks, because it would be less arguments passed here */
 //    onChangeAddExpenseAmount: (amount: String) -> Unit,
@@ -100,63 +106,27 @@ fun HomeScreenCostsActions(
         initialMinute = nowMinute,
         is24Hour = true,
     )
-//    val showTimePickerDialog = remember {
-//        mutableStateOf(false)
-//    }
-
-    /* category picker */
-    /* these will be held in view model, and categories stored and taken from database */
-//    val oldCategoriesState = remember {
-//        mutableStateOf(
-//            listOf<CategoryModel>(
-//                CategoryModel(1, "Health"),
-//                CategoryModel(2, "Home"),
-//                CategoryModel(3, "Food"),
-//                CategoryModel(4, "Social"),
-//                CategoryModel(5, "Sport"),
-//                CategoryModel(id = 6, "Some longer category name"),
-//                CategoryModel(7, "Other"),
-//            )
-//        )
-//    }
-//    val newCategoryState = remember {
-//        mutableStateOf("")
-//    }
-
-    /* TODO i guess this will be populated, in view model, with sme category models */
-//    val selectedCategoryState = remember {
-//        mutableStateOf<CategoryModel?>(null)
-//    }
-//    val showCategoryPickerDialog = remember {
-//        mutableStateOf(false)
-//    }
-
-
-    /* description state */
-//    val descriptionState = remember {
-//        mutableStateOf("")
-//    }
 
     /* edit daily budget state */
     val editDailyBudgetBottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
     /* TODO this is temp here */
-    val monthPeriods = listOf(
-        PeriodMonthModel(1, 11, 2023, 323),
-        PeriodMonthModel(2, 12, 2023, 115),
-        PeriodMonthModel(3, 1, 2024, 345),
-        PeriodMonthModel(4, 2, 2024, 459),
-        PeriodMonthModel(5, 3, 2024, 711),
-    )
+//    val monthPeriods = listOf(
+//        PeriodMonthModel(1, 11, 2023, 323),
+//        PeriodMonthModel(2, 12, 2023, 115),
+//        PeriodMonthModel(3, 1, 2024, 345),
+//        PeriodMonthModel(4, 2, 2024, 459),
+//        PeriodMonthModel(5, 3, 2024, 711),
+//    )
 
-    val selectedMonthPeriod = remember {
-        mutableStateOf(monthPeriods.last())
-    }
-
-    val selectedMonthPeriodDailyBudget = remember {
-        mutableStateOf<String?>(null)
-    }
+//    val selectedMonthPeriod = remember {
+//        mutableStateOf(monthPeriods.last())
+//    }
+//
+//    val selectedMonthPeriodDailyBudget = remember {
+//        mutableStateOf<String?>(null)
+//    }
 
 
     /* TODO this should be extracted somehow, so it does not pollute this */
@@ -231,6 +201,9 @@ fun HomeScreenCostsActions(
                 },
 //                selectedCategory = selectedCategoryState.value,
                 selectedCategory = run {
+                    /* TODO: hm, maybe this should also be handled by view model - to keep this inside add expense state */
+
+                    /* TODO but it needs to be reactive? so we need to adjustit every time */
                     val selectedId = addExpenseState.data.categoryId
                     val selectedCategory =
                         categoriesState.categories.firstOrNull { it.id == selectedId }
@@ -253,21 +226,35 @@ fun HomeScreenCostsActions(
                     }
                 },
                 sheetState = editDailyBudgetBottomSheetState,
-                onSave = {},
+                onSave = {
+                    onEditDailyBudgetEvent(
+                        HomeScreenEditDailyBudgetEvent.SubmitBudget
+                    )
+                },
                 onCancel = {},
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 10.dp),
-                monthPeriods = monthPeriods,
-                selectedMonthPeriod = selectedMonthPeriod.value,
+//                monthPeriods = monthPeriods,
+                monthPeriods = monthPeriodsState.periods,
+//                selectedMonthPeriod = selectedMonthPeriod.value,
+                selectedMonthPeriod = editDailyBudgetState.data.selectedMonthPeriod,
                 onChangeSelectedMonthPeriod = {
-                    selectedMonthPeriod.value = it
-                    /* TODO we want to make sure original period amount is used */
-                    selectedMonthPeriodDailyBudget.value = null
+
+                    onEditDailyBudgetEvent(
+                        HomeScreenEditDailyBudgetEvent.SelectMonthPeriod(it.id)
+                    )
+//                    selectedMonthPeriod.value = it
+//                    /* TODO we want to make sure original period amount is used */
+//                    selectedMonthPeriodDailyBudget.value = null
                 },
-                selectedMonthPeriodDailyBudgetValue = selectedMonthPeriodDailyBudget.value,
+//                selectedMonthPeriodDailyBudgetValue = selectedMonthPeriodDailyBudget.value,
+                selectedMonthPeriodDailyBudgetValue = editDailyBudgetState.data.selectedMonthPeriodDailyBudgetValue,
                 onChangeSelectedMonthPeriodDailyBudgetValue = {
-                    selectedMonthPeriodDailyBudget.value = it
+//                    selectedMonthPeriodDailyBudget.value = it
+                    onEditDailyBudgetEvent(
+                        HomeScreenEditDailyBudgetEvent.UpdateBudgetAmount(it)
+                    )
                 }
             )
         }

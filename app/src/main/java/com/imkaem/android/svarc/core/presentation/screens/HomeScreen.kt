@@ -31,13 +31,16 @@ fun HomeScreen(
             HomeScreenCostsActions(
                 addExpenseState = state.addExpenseState,
                 addCategoryState = state.addCategoryState,
+                editDailyBudgetState = state.editDailyBudgetState,
                 categoriesState = state.categoriesState,
+                monthPeriodsState = state.monthPeriodsState,
                 datePickerDialogState = state.datePickerDialogState,
                 timePickerDialogState = state.timePickerDialogState,
                 categoryPickerDialogState = state.categoryPickerDialogState,
                 onNavigateToReports = onNavigateToReports,
                 onAddExpenseEvent = viewModel::onEvent,
                 onAddCategoryEvent = viewModel::onEvent,
+                onEditDailyBudgetEvent = viewModel::onEvent,
                 onToggleDialogEvent = viewModel::onEvent,
                 modifier = Modifier.padding(horizontal = 10.dp)
             )

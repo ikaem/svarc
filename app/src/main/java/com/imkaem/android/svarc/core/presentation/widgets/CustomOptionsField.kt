@@ -44,7 +44,7 @@ fun CustomOptionsField(
     ) {
 
         CustomTextField(
-            value = selectedOption.label,
+            value = selectedOption.label ?: "",
             readOnly = true,
             label = label,
             leadingIcon = leadingIcon,
@@ -85,7 +85,7 @@ fun CustomOptionsField(
         ) {
             for (option in options) {
                 DropdownMenuItem(
-                    text = { Text(option.label) },
+                    text = { Text(option.label ?: "") },
                     onClick = {
                         /* TODO i guess dropdown should be closed here */
                         onSelectOption(option)

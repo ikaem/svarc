@@ -51,7 +51,7 @@ fun EditDailyBudgetBottomSheet(
     onDismissRequest: () -> Unit,
     sheetState: SheetState,
     monthPeriods: List<PeriodMonthModel>,
-    selectedMonthPeriod: PeriodMonthModel,
+    selectedMonthPeriod: PeriodMonthModel?,
     onChangeSelectedMonthPeriod: (PeriodMonthModel) -> Unit,
     selectedMonthPeriodDailyBudgetValue: String?,
     onChangeSelectedMonthPeriodDailyBudgetValue: (String) -> Unit,
@@ -91,8 +91,8 @@ fun EditDailyBudgetBottomSheet(
                 CustomOptionsField(
                     isOptionsShown = isPeriodDropdownExpanded.value,
                     selectedOption = CustomOptionFieldValue(
-                        key = selectedMonthPeriod.id,
-                        label = selectedMonthPeriod.name,
+                        key = selectedMonthPeriod?.id,
+                        label = selectedMonthPeriod?.name,
                     ),
                     options = monthPeriods.map {
                         CustomOptionFieldValue(
@@ -121,7 +121,11 @@ fun EditDailyBudgetBottomSheet(
                 ) {
                     CustomTextField(
                         value = selectedMonthPeriodDailyBudgetValue
-                            ?: selectedMonthPeriod.amount.let { cents ->
+                            ?: selectedMonthPeriod?.amount.let { cents ->
+
+                                if(cents == null) {
+                                    return@let ""
+                                }
 
                                 val euros = cents / 100.00
                                 val formatted = String.format(Locale.getDefault(), "%.2f", euros)
@@ -149,7 +153,7 @@ fun EditDailyBudgetBottomSheet(
 //                verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     Button(
-                        onClick = onCancel,
+                        onClick = onSave,
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(5.dp),
                         colors = ButtonDefaults.buttonColors(
@@ -160,7 +164,7 @@ fun EditDailyBudgetBottomSheet(
 
                     }
                     Button(
-                        onClick = onSave,
+                        onClick = onCancel,
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(5.dp),
                         colors = ButtonDefaults.buttonColors(

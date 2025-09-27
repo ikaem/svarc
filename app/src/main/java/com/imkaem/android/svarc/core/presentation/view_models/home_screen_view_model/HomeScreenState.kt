@@ -2,18 +2,38 @@ package com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_
 
 import com.imkaem.android.svarc.costs.domain.models.CategoryModel
 import com.imkaem.android.svarc.costs.domain.models.ExpenseModel
+import com.imkaem.android.svarc.costs.domain.models.PeriodMonthModel
 
 data class HomeScreenState(
     val addExpenseState: HomeScreenAddExpenseState,
     val expensesState: HomeScreenExpensesState,
     val addCategoryState: HomeScreenAddCategoryState,
     val categoriesState: HomeScreenCategoriesState,
+    val editDailyBudgetState: HomeScreenEditDailyBudgetState,
+    val monthPeriodsState: HomeScreenMonthPeriodsState,
     val selectedTab: HomeScreenTab,
     val timePickerDialogState: HomeScreenTimePickerDialogState,
     val datePickerDialogState: HomeScreenDatePickerDialogState,
     val categoryPickerDialogState: HomeScreenCategoryPickerDialogState,
 
     /* TODO we will be adding other states, like home screen costs and edit daily budget and so on... */
+)
+
+data class HomeScreenMonthPeriodsState(
+    val periods: List<PeriodMonthModel>,
+    val isLoading: Boolean,
+    val error: String? = null,
+)
+
+data class HomeScreenEditDailyBudgetState(
+    val data: HomeScreenEditDailyBudgetStateData,
+    val isLoading: Boolean,
+    val error: String? = null
+)
+
+data class HomeScreenEditDailyBudgetStateData(
+    val selectedMonthPeriod: PeriodMonthModel?,
+    val selectedMonthPeriodDailyBudgetValue: String?
 )
 
 
@@ -70,6 +90,7 @@ data class HomeScreenDatePickerDialogState(
 data class HomeScreenCategoryPickerDialogState(
     val isShown: Boolean,
 )
+
 enum class HomeScreenTab(val index: Int) {
     CURRENT(0),
     ALL_EXPENSES(1);
