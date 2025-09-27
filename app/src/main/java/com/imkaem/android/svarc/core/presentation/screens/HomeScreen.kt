@@ -42,7 +42,11 @@ fun HomeScreen(
                 onAddCategoryEvent = viewModel::onEvent,
                 onEditDailyBudgetEvent = viewModel::onEvent,
                 onToggleDialogEvent = viewModel::onEvent,
-                modifier = Modifier.padding(horizontal = 10.dp)
+                modifier = Modifier.padding(horizontal = 10.dp),
+                /* TODO temp only */
+                selectedDate = state.selectedDate,
+                selectedHour = state.selectedHour,
+                selectedMinute = state.selectedMinute,
             )
 
             HorizontalDivider(

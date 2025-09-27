@@ -14,16 +14,17 @@ fun PickDateDialog(
     onDismissRequest: () -> Unit,
     dateState: DatePickerState,
 ) {
+
+
+    /* TODO lets create date state here instead */
+
     DatePickerDialog(
 //        onDismissRequest = {
 //            showDatePickerDialog.value = false
 //        },
         onDismissRequest = onDismissRequest,
         confirmButton = {},
-        dismissButton = {
-
-
-        },
+        dismissButton = {},
         shape = RoundedCornerShape(0.dp)
     ) {
         DatePicker(

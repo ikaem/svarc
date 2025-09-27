@@ -16,6 +16,11 @@ data class HomeScreenState(
     val datePickerDialogState: HomeScreenDatePickerDialogState,
     val categoryPickerDialogState: HomeScreenCategoryPickerDialogState,
 
+    /* TODO this is temp only, we will be handing this later */
+    val selectedDate: Long,
+    val selectedHour: Int,
+    val selectedMinute: Int,
+
     /* TODO we will be adding other states, like home screen costs and edit daily budget and so on... */
 )
 

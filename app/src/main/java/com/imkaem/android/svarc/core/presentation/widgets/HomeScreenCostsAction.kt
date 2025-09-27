@@ -78,7 +78,13 @@ fun HomeScreenCostsActions(
     onToggleDialogEvent: (HomeScreenToggleDialogEvent) -> Unit,
     /* TODO i guess it would be better to use that events type on callbacks, because it would be less arguments passed here */
 //    onChangeAddExpenseAmount: (amount: String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+
+
+    /* TODO only testing for now */
+    selectedDate: Long,
+    selectedHour: Int,
+    selectedMinute: Int,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -86,9 +92,9 @@ fun HomeScreenCostsActions(
     /* add expense bottom sheet stuff -> move to screen, and view model later */
     val addExpenseBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    val currentTime = Calendar.getInstance()
-    val nowHour = currentTime.get(Calendar.HOUR_OF_DAY)
-    val nowMinute = currentTime.get(Calendar.MINUTE)
+//    val currentTime = Calendar.getInstance()
+//    val nowHour = currentTime.get(Calendar.HOUR_OF_DAY)
+//    val nowMinute = currentTime.get(Calendar.MINUTE)
 
     /* amount state */
 //    val amountState = remember {
@@ -97,12 +103,17 @@ fun HomeScreenCostsActions(
 
     /* DATE PICKER */
     /* TODO we will move logic for date and time to viewModel later */
-    val dateState = rememberDatePickerState()
+    /* TODO i think these picker states should be moved to our composable closest to the picker - the one that is actually recomposed, so that these states can be reinstantiated? */
+    val dateState = rememberDatePickerState(
+        /* TODO ok, it seems like we can specify here initial selected date */
+        initialSelectedDateMillis = selectedDate,
+    )
+
 
     /* TIME PICKER */
     val timeState = rememberTimePickerState(
-        initialHour = nowHour,
-        initialMinute = nowMinute,
+        initialHour = selectedHour,
+        initialMinute = selectedMinute,
         is24Hour = true,
     )
 
@@ -221,7 +232,8 @@ fun HomeScreenCostsActions(
                     val formattedDate = DateHelpers.instantToLocalDateFormattedString(instant)
 
                     formattedDate
-                } ?: currentTime.timeInMillis.let {
+//                } ?: currentTime.timeInMillis.let {
+                } ?: selectedDate.let {
                     val instant = DateHelpers.millisecondsToInstant((it))
                     val formattedDate = DateHelpers.instantToLocalDateFormattedString(instant)
 

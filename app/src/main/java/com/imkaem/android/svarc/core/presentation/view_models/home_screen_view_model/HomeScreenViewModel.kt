@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
+import java.util.Calendar
 
 /* TODO maybe good to separate setting state for different parts of state
 * https://trello.com/c/pnDpu2A4
@@ -340,6 +341,23 @@ class HomeScreenViewModel : ViewModel() {
 
 
     private fun generateInitialState(): HomeScreenState {
+        /* TODO i guess this could be extracted to something like getNowDateTimeValues
+        *  , and then reuse it on toggle thing to show to reset all
+        * using this -> https://slack-chats.kotlinlang.org/t/22780603/i-m-using-timepickerstate-and-datepickerstate-for-timepicker
+        * */
+
+        /* TODO not sure if this should be declared on the view model level? but if do so, then now date and time will be incorrect after using the same view model (screen) for some time */
+        val currentTime = Calendar.getInstance()
+        val nowHours = currentTime.get(Calendar.HOUR_OF_DAY)
+        val nowMinutes = currentTime.get(Calendar.MINUTE)
+//        val nowDay = currentTime.get(Calendar.DAY_OF_MONTH)
+//        val nowMonth = currentTime.get(Calendar.MONTH) + 1
+//        val nowYear = currentTime.get(Calendar.YEAR)
+//        val nowMilliseconds = Instant.now().toEpochMilli()
+        val nowMilliseconds = currentTime.timeInMillis
+
+
+
         return HomeScreenState(
             expensesState = HomeScreenExpensesState(
                 expenses = emptyList(),
@@ -397,6 +415,13 @@ class HomeScreenViewModel : ViewModel() {
                 isLoading = false,
                 error = null,
             ),
+            selectedDate = nowMilliseconds,
+            selectedHour = nowHours,
+            selectedMinute = nowMinutes,
+
+            /* TODO so here we have to calculate now actually*/
+            /* TODO but now should only be calculated when we open the modal */
+            /* TODO change this to calculate these numbers only when we open the add expense modal - we can do it in onHandleToggleDate and TimePicker Dialogs ...*/
         )
     }
 
