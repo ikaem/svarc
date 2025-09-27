@@ -98,7 +98,6 @@ fun HomeScreenCostsActions(
     /* DATE PICKER */
     /* TODO we will move logic for date and time to viewModel later */
     val dateState = rememberDatePickerState()
-//    val showDatePickerDialog = remember { mutableStateOf(false) }
 
     /* TIME PICKER */
     val timeState = rememberTimePickerState(
@@ -111,64 +110,41 @@ fun HomeScreenCostsActions(
     val editDailyBudgetBottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
-    /* TODO this is temp here */
-//    val monthPeriods = listOf(
-//        PeriodMonthModel(1, 11, 2023, 323),
-//        PeriodMonthModel(2, 12, 2023, 115),
-//        PeriodMonthModel(3, 1, 2024, 345),
-//        PeriodMonthModel(4, 2, 2024, 459),
-//        PeriodMonthModel(5, 3, 2024, 711),
-//    )
-
-//    val selectedMonthPeriod = remember {
-//        mutableStateOf(monthPeriods.last())
-//    }
-//
-//    val selectedMonthPeriodDailyBudget = remember {
-//        mutableStateOf<String?>(null)
-//    }
 
 
     /* TODO this should be extracted somehow, so it does not pollute this */
     when {
 
-//        showTimePickerDialog.value -> {
         timePickerDialogState.isShown -> {
             PickTimeDialog(
                 onDismissRequest = {
-//                    showTimePickerDialog.value = false
                     onToggleDialogEvent(HomeScreenToggleDialogEvent.ToggleTimePickerDialog)
                 },
                 timeState = timeState,
             )
         }
 
-//        showDatePickerDialog.value -> {
+
         datePickerDialogState.isShown -> {
             PickDateDialog(
                 onDismissRequest = {
-//                    showDatePickerDialog.value = false
                     onToggleDialogEvent(HomeScreenToggleDialogEvent.ToggleDatePickerDialog)
                 },
                 dateState = dateState,
             )
         }
 
-//        showCategoryPickerDialog.value -> {
         categoryPickerDialogState.isShown -> {
             PickCategoryDialog(
                 onDismissRequest = {
-//                    showCategoryPickerDialog.value = false
                     onToggleDialogEvent(HomeScreenToggleDialogEvent.ToggleCategoryPickerDialog)
                 },
                 onSelectCategory = { it ->
-//                    selectedCategoryState.value = it
                     onAddExpenseEvent(
                         HomeScreenAddExpenseEvent.UpdateCategory(it.id),
                     )
                 },
                 onNewCategoryNameChange = {
-//                    newCategoryState.value = it
                     onAddCategoryEvent(
                         HomeScreenAddCategoryEvent.UpdateName(it)
                     )
@@ -177,29 +153,7 @@ fun HomeScreenCostsActions(
                     onAddCategoryEvent(
                         HomeScreenAddCategoryEvent.SubmitCategory
                     )
-
-//                    val trimmed = newCategoryState.value.trim()
-//                    if (trimmed.isEmpty()) {
-//                        return@PickCategoryDialog
-//                    }
-//
-//                    val existingCategory = oldCategoriesState.value.find { i ->
-//                        i.name.equals(trimmed, ignoreCase = true)
-//                    }
-//                    if (existingCategory != null) {
-//                        return@PickCategoryDialog
-//                    }
-//
-//                    val newId = (oldCategoriesState.value.maxOfOrNull { it.id } ?: 0) + 1
-//                    val newCategory = CategoryModel(newId, trimmed)
-//
-//                    val updatedList = oldCategoriesState.value.toMutableList()
-//                    updatedList.add(newCategory)
-//
-//                    oldCategoriesState.value = updatedList.toList()
-//                    newCategoryState.value = ""
                 },
-//                selectedCategory = selectedCategoryState.value,
                 selectedCategory = run {
                     /* TODO: hm, maybe this should also be handled by view model - to keep this inside add expense state */
 
@@ -212,9 +166,6 @@ fun HomeScreenCostsActions(
                 },
                 categories = categoriesState.categories,
                 newCategoryName = addCategoryState.data.name,
-//                newCategoryName = categoriesState.
-//                categories = oldCategoriesState.value,
-//                newCategoryState.value,
             )
         }
 
@@ -235,23 +186,17 @@ fun HomeScreenCostsActions(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 10.dp),
-//                monthPeriods = monthPeriods,
                 monthPeriods = monthPeriodsState.periods,
-//                selectedMonthPeriod = selectedMonthPeriod.value,
                 selectedMonthPeriod = editDailyBudgetState.data.selectedMonthPeriod,
                 onChangeSelectedMonthPeriod = {
 
                     onEditDailyBudgetEvent(
                         HomeScreenEditDailyBudgetEvent.SelectMonthPeriod(it.id)
                     )
-//                    selectedMonthPeriod.value = it
-//                    /* TODO we want to make sure original period amount is used */
-//                    selectedMonthPeriodDailyBudget.value = null
                 },
-//                selectedMonthPeriodDailyBudgetValue = selectedMonthPeriodDailyBudget.value,
+
                 selectedMonthPeriodDailyBudgetValue = editDailyBudgetState.data.selectedMonthPeriodDailyBudgetValue,
                 onChangeSelectedMonthPeriodDailyBudgetValue = {
-//                    selectedMonthPeriodDailyBudget.value = it
                     onEditDailyBudgetEvent(
                         HomeScreenEditDailyBudgetEvent.UpdateBudgetAmount(it)
                     )
@@ -267,10 +212,8 @@ fun HomeScreenCostsActions(
                     }
                 },
                 sheetState = addExpenseBottomSheetState,
-//                amountValue = amountState.value,
                 amountValue = addExpenseState.data.amount,
                 onAmountChange = {
-//                    amountState.value = it
                     onAddExpenseEvent(HomeScreenAddExpenseEvent.UpdateAmount(it))
                 },
                 dateValue = dateState.selectedDateMillis?.let {
@@ -286,7 +229,6 @@ fun HomeScreenCostsActions(
 
                 },
                 onOpenDatePicker = {
-//                    showDatePickerDialog.value = true
                     onToggleDialogEvent(HomeScreenToggleDialogEvent.ToggleDatePickerDialog)
                 },
                 timeValue = timeState.let {
@@ -301,43 +243,27 @@ fun HomeScreenCostsActions(
                     )
                 },
                 onOpenTimePicker = {
-//                    showTimePickerDialog.value = true
                     onToggleDialogEvent(HomeScreenToggleDialogEvent.ToggleTimePickerDialog)
                 },
-//                categoryValue = selectedCategoryState.value?.name
-//                    ?: oldCategoriesState.value.last().name,
                 categoryValue = addExpenseState.data.categoryId?.let { categoryId ->
                     val categoryName =
                         categoriesState.categories.firstOrNull { category -> category.id == categoryId }
                     categoryName?.name
                 } ?: "Unknown",
                 onOpenCategoryPicker = {
-//                    showCategoryPickerDialog.value = true
                     onToggleDialogEvent(HomeScreenToggleDialogEvent.ToggleCategoryPickerDialog)
                 },
-
-//                descriptionValue = descriptionState.value,
                 descriptionValue = addExpenseState.data.description,
                 onDescriptionChange = {
-//                    descriptionState.value = it
                     onAddExpenseEvent(HomeScreenAddExpenseEvent.UpdateDescription(it))
                 },
                 onCancel = {
-                    /* TODO add the expense */
-                    /* clean all */
+
                     onAddExpenseEvent
-//                    selectedCategoryState.value = null
-//                    descriptionState.value = ""
-//                    amountState.value = "0.00"
-//                    dateState = null
                 },
                 onSave = {
-
                     /* TODO not really sure what to do here yet */
-                    /* clean all */
-//                    selectedCategoryState.value = null
-//                    descriptionState.value = ""
-//                    amountState.value = "0.00"
+
                 },
                 modifier = Modifier
                     .fillMaxWidth()
