@@ -32,6 +32,15 @@ class HomeScreenViewModel : ViewModel() {
             is HomeScreenAddExpenseEvent -> handleAddExpenseEvent(event)
             is HomeScreenChangeTabEvent -> handleChangeTabEvent(event)
             is HomeScreenAddCategoryEvent -> handleAddCategoryEvent(event)
+            is HomeScreenToggleDialogEvent -> handleToggleDialogEvent(event)
+        }
+    }
+
+    private fun handleToggleDialogEvent(event: HomeScreenToggleDialogEvent) {
+        when (event) {
+            is HomeScreenToggleDialogEvent.ToggleDatePickerDialog -> onToggleDatePickerDialog()
+            is HomeScreenToggleDialogEvent.ToggleTimePickerDialog -> onToggleTimePickerDialog()
+            is HomeScreenToggleDialogEvent.ToggleCategoryPickerDialog -> onToggleCategoryPickerDialog()
         }
     }
 
@@ -51,9 +60,8 @@ class HomeScreenViewModel : ViewModel() {
             is HomeScreenAddExpenseEvent.UpdateCategory -> onAddExpenseChangeCategory(
                 event.categoryId,
             )
-
+            is HomeScreenAddExpenseEvent.UpdateDescription -> onAddExpenseChangeDescription(event.description)
             is HomeScreenAddExpenseEvent.UpdateDate -> TODO()
-            is HomeScreenAddExpenseEvent.UpdateDescription -> TODO()
             is HomeScreenAddExpenseEvent.UpdateTime -> TODO()
             /* TODO this is actually submit new event */
             HomeScreenAddExpenseEvent.SubmitExpense -> TODO()
@@ -72,6 +80,39 @@ class HomeScreenViewModel : ViewModel() {
                     newState
                 }
             }
+        }
+    }
+
+    private fun onToggleDatePickerDialog() {
+        val newState = _state.value.copy(
+            datePickerDialogState = _state.value.datePickerDialogState.copy(
+                isShown = !_state.value.datePickerDialogState.isShown
+            )
+        )
+        _state.update {
+            newState
+        }
+    }
+
+    private fun onToggleTimePickerDialog() {
+        val newState = _state.value.copy(
+            timePickerDialogState = _state.value.timePickerDialogState.copy(
+                isShown = !_state.value.timePickerDialogState.isShown
+            )
+        )
+        _state.update {
+            newState
+        }
+    }
+
+    private fun onToggleCategoryPickerDialog() {
+        val newState = _state.value.copy(
+            categoryPickerDialogState = _state.value.categoryPickerDialogState.copy(
+                isShown = !_state.value.categoryPickerDialogState.isShown
+            )
+        )
+        _state.update {
+            newState
         }
     }
 
@@ -173,6 +214,20 @@ class HomeScreenViewModel : ViewModel() {
         }
     }
 
+    private fun onAddExpenseChangeDescription(description: String) {
+        val newState = _state.value.copy(
+            addExpenseState = _state.value.addExpenseState.copy(
+                data = _state.value.addExpenseState.data.copy(
+                    description = description,
+                )
+            )
+        )
+
+        _state.update {
+            newState
+        }
+    }
+
 
     private fun generateInitialState(): HomeScreenState {
         return HomeScreenState(
@@ -186,7 +241,6 @@ class HomeScreenViewModel : ViewModel() {
                 isLoading = true,
                 error = null
             ),
-            selectedTab = HomeScreenTab.CURRENT,
             addCategoryState = HomeScreenAddCategoryState(
                 data = HomeScreenAddCategoryStateData(
                     name = ""
@@ -209,6 +263,16 @@ class HomeScreenViewModel : ViewModel() {
 
                 isLoading = true,
                 error = null
+            ),
+            selectedTab = HomeScreenTab.CURRENT,
+            timePickerDialogState = HomeScreenTimePickerDialogState(
+                isShown = false,
+            ),
+            datePickerDialogState = HomeScreenDatePickerDialogState(
+                isShown = false,
+            ),
+            categoryPickerDialogState = HomeScreenCategoryPickerDialogState(
+                isShown = false,
             )
         )
     }
@@ -275,6 +339,10 @@ class HomeScreenViewModel : ViewModel() {
         )
 
         val selectedTab = _state.value.selectedTab
+        val timePickerDialogState = _state.value.timePickerDialogState
+        val datePickerDialogState = _state.value.datePickerDialogState
+        val categoryPickerDialogState = _state.value.categoryPickerDialogState
+
 
         val newState = _state.value.copy(
             expensesState = expensesState,
@@ -282,6 +350,9 @@ class HomeScreenViewModel : ViewModel() {
             addExpenseState = addExpensesState,
             addCategoryState = addCategoryState,
             selectedTab = selectedTab,
+            timePickerDialogState = timePickerDialogState,
+            datePickerDialogState = datePickerDialogState,
+            categoryPickerDialogState = categoryPickerDialogState,
         )
 
         _state.update {
@@ -367,7 +438,7 @@ class HomeScreenViewModel : ViewModel() {
         val categories = _state.value.categoriesState.categories
 
         val existing = categories.find { c ->
-            c.name === name
+            c.name.equals(name, ignoreCase = true)
         }
         if (existing != null) {
             throw IllegalStateException("Category with name $name already exists")

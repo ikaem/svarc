@@ -6,6 +6,12 @@ sealed class HomeScreenChangeTabEvent : HomeScreenEvent() {
     data class ChangeTab(val index: Int) : HomeScreenChangeTabEvent()
 }
 
+sealed class HomeScreenToggleDialogEvent: HomeScreenEvent() {
+    object ToggleDatePickerDialog: HomeScreenToggleDialogEvent()
+    object ToggleTimePickerDialog: HomeScreenToggleDialogEvent()
+    object ToggleCategoryPickerDialog: HomeScreenToggleDialogEvent()
+}
+
 
 sealed class HomeScreenAddCategoryEvent: HomeScreenEvent() {
     data class UpdateName(val name: String): HomeScreenAddCategoryEvent()

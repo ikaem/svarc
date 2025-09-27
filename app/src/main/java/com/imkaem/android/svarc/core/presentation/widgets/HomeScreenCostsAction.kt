@@ -35,6 +35,10 @@ import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_m
 import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenAddExpenseEvent
 import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenAddExpenseState
 import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenCategoriesState
+import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenCategoryPickerDialogState
+import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenDatePickerDialogState
+import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenToggleDialogEvent
+import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenTimePickerDialogState
 import com.imkaem.android.svarc.core.utils.helpers.DateHelpers
 import com.imkaem.android.svarc.costs.domain.models.PeriodMonthModel
 import com.imkaem.android.svarc.costs.presentation.PickCategoryDialog
@@ -59,9 +63,13 @@ fun HomeScreenCostsActions(
     addExpenseState: HomeScreenAddExpenseState,
     addCategoryState: HomeScreenAddCategoryState,
     categoriesState: HomeScreenCategoriesState,
+    datePickerDialogState: HomeScreenDatePickerDialogState,
+    timePickerDialogState: HomeScreenTimePickerDialogState,
+    categoryPickerDialogState: HomeScreenCategoryPickerDialogState,
     onNavigateToReports: () -> Unit,
     onAddExpenseEvent: (HomeScreenAddExpenseEvent) -> Unit,
     onAddCategoryEvent: (HomeScreenAddCategoryEvent) -> Unit,
+    onToggleDialogEvent: (HomeScreenToggleDialogEvent) -> Unit,
     /* TODO i guess it would be better to use that events type on callbacks, because it would be less arguments passed here */
 //    onChangeAddExpenseAmount: (amount: String) -> Unit,
     modifier: Modifier = Modifier
@@ -77,15 +85,14 @@ fun HomeScreenCostsActions(
     val nowMinute = currentTime.get(Calendar.MINUTE)
 
     /* amount state */
-    val amountState = remember {
-        mutableStateOf("0.00")
-    }
+//    val amountState = remember {
+//        mutableStateOf("0.00")
+//    }
 
     /* DATE PICKER */
-//    val dateState = rememberDatePickerState()
-
+    /* TODO we will move logic for date and time to viewModel later */
     val dateState = rememberDatePickerState()
-    val showDatePickerDialog = remember { mutableStateOf(false) }
+//    val showDatePickerDialog = remember { mutableStateOf(false) }
 
     /* TIME PICKER */
     val timeState = rememberTimePickerState(
@@ -93,9 +100,9 @@ fun HomeScreenCostsActions(
         initialMinute = nowMinute,
         is24Hour = true,
     )
-    val showTimePickerDialog = remember {
-        mutableStateOf(false)
-    }
+//    val showTimePickerDialog = remember {
+//        mutableStateOf(false)
+//    }
 
     /* category picker */
     /* these will be held in view model, and categories stored and taken from database */
@@ -112,23 +119,23 @@ fun HomeScreenCostsActions(
 //            )
 //        )
 //    }
-    val newCategoryState = remember {
-        mutableStateOf("")
-    }
+//    val newCategoryState = remember {
+//        mutableStateOf("")
+//    }
 
     /* TODO i guess this will be populated, in view model, with sme category models */
 //    val selectedCategoryState = remember {
 //        mutableStateOf<CategoryModel?>(null)
 //    }
-    val showCategoryPickerDialog = remember {
-        mutableStateOf(false)
-    }
+//    val showCategoryPickerDialog = remember {
+//        mutableStateOf(false)
+//    }
 
 
     /* description state */
-    val descriptionState = remember {
-        mutableStateOf("")
-    }
+//    val descriptionState = remember {
+//        mutableStateOf("")
+//    }
 
     /* edit daily budget state */
     val editDailyBudgetBottomSheetState = rememberModalBottomSheetState(
@@ -155,28 +162,34 @@ fun HomeScreenCostsActions(
     /* TODO this should be extracted somehow, so it does not pollute this */
     when {
 
-        showTimePickerDialog.value -> {
+//        showTimePickerDialog.value -> {
+        timePickerDialogState.isShown -> {
             PickTimeDialog(
                 onDismissRequest = {
-                    showTimePickerDialog.value = false
+//                    showTimePickerDialog.value = false
+                    onToggleDialogEvent(HomeScreenToggleDialogEvent.ToggleTimePickerDialog)
                 },
                 timeState = timeState,
             )
         }
 
-        showDatePickerDialog.value -> {
+//        showDatePickerDialog.value -> {
+        datePickerDialogState.isShown -> {
             PickDateDialog(
                 onDismissRequest = {
-                    showDatePickerDialog.value = false
+//                    showDatePickerDialog.value = false
+                    onToggleDialogEvent(HomeScreenToggleDialogEvent.ToggleDatePickerDialog)
                 },
                 dateState = dateState,
             )
         }
 
-        showCategoryPickerDialog.value -> {
+//        showCategoryPickerDialog.value -> {
+        categoryPickerDialogState.isShown -> {
             PickCategoryDialog(
                 onDismissRequest = {
-                    showCategoryPickerDialog.value = false
+//                    showCategoryPickerDialog.value = false
+                    onToggleDialogEvent(HomeScreenToggleDialogEvent.ToggleCategoryPickerDialog)
                 },
                 onSelectCategory = { it ->
 //                    selectedCategoryState.value = it
@@ -286,7 +299,8 @@ fun HomeScreenCostsActions(
 
                 },
                 onOpenDatePicker = {
-                    showDatePickerDialog.value = true
+//                    showDatePickerDialog.value = true
+                    onToggleDialogEvent(HomeScreenToggleDialogEvent.ToggleDatePickerDialog)
                 },
                 timeValue = timeState.let {
                     val hour = timeState.hour
@@ -300,7 +314,8 @@ fun HomeScreenCostsActions(
                     )
                 },
                 onOpenTimePicker = {
-                    showTimePickerDialog.value = true
+//                    showTimePickerDialog.value = true
+                    onToggleDialogEvent(HomeScreenToggleDialogEvent.ToggleTimePickerDialog)
                 },
 //                categoryValue = selectedCategoryState.value?.name
 //                    ?: oldCategoriesState.value.last().name,
@@ -310,9 +325,12 @@ fun HomeScreenCostsActions(
                     categoryName?.name
                 } ?: "Unknown",
                 onOpenCategoryPicker = {
-                    showCategoryPickerDialog.value = true
+//                    showCategoryPickerDialog.value = true
+                    onToggleDialogEvent(HomeScreenToggleDialogEvent.ToggleCategoryPickerDialog)
                 },
-                descriptionValue = descriptionState.value,
+
+//                descriptionValue = descriptionState.value,
+                descriptionValue = addExpenseState.data.description,
                 onDescriptionChange = {
 //                    descriptionState.value = it
                     onAddExpenseEvent(HomeScreenAddExpenseEvent.UpdateDescription(it))

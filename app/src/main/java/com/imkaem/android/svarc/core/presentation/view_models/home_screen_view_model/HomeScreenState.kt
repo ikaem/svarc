@@ -3,12 +3,15 @@ package com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_
 import com.imkaem.android.svarc.costs.domain.models.CategoryModel
 import com.imkaem.android.svarc.costs.domain.models.ExpenseModel
 
-data class HomeScreenState (
+data class HomeScreenState(
     val addExpenseState: HomeScreenAddExpenseState,
     val expensesState: HomeScreenExpensesState,
     val addCategoryState: HomeScreenAddCategoryState,
     val categoriesState: HomeScreenCategoriesState,
     val selectedTab: HomeScreenTab,
+    val timePickerDialogState: HomeScreenTimePickerDialogState,
+    val datePickerDialogState: HomeScreenDatePickerDialogState,
+    val categoryPickerDialogState: HomeScreenCategoryPickerDialogState,
 
     /* TODO we will be adding other states, like home screen costs and edit daily budget and so on... */
 )
@@ -39,6 +42,7 @@ data class HomeScreenCategoriesState(
     val isLoading: Boolean,
     val error: String? = null
 )
+
 data class HomeScreenAddExpenseStateData(
     val amount: String,
     /* TODO this could possible be some value class? */
@@ -55,6 +59,17 @@ data class HomeScreenAddCategoryStateData(
     val name: String
 )
 
+data class HomeScreenTimePickerDialogState(
+    val isShown: Boolean,
+)
+
+data class HomeScreenDatePickerDialogState(
+    val isShown: Boolean,
+)
+
+data class HomeScreenCategoryPickerDialogState(
+    val isShown: Boolean,
+)
 enum class HomeScreenTab(val index: Int) {
     CURRENT(0),
     ALL_EXPENSES(1);
