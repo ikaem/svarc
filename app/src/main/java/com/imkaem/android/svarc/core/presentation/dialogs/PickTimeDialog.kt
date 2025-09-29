@@ -9,7 +9,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerLayoutType
 import androidx.compose.material3.TimePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -22,8 +24,21 @@ import com.imkaem.android.svarc.ui.theme.ColorWhite
 @Composable
 fun PickTimeDialog(
     onDismissRequest: () -> Unit,
-    timeState: TimePickerState,
+    selectedHour: Int,
+    selectedMinute: Int,
+    onTimeChange: (hour: Int, minute: Int) -> Unit,
+//    timeState: TimePickerState,
 ) {
+
+    val timeState = rememberTimePickerState(
+        initialHour = selectedHour,
+        initialMinute = selectedMinute,
+        is24Hour = true,
+    )
+
+    LaunchedEffect(timeState.hour, timeState.minute) {
+        onTimeChange(timeState.hour, timeState.minute)
+    }
 
 
     Dialog(

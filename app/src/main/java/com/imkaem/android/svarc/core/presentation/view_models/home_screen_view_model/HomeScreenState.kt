@@ -17,9 +17,9 @@ data class HomeScreenState(
     val categoryPickerDialogState: HomeScreenCategoryPickerDialogState,
 
     /* TODO this is temp only, we will be handing this later */
-    val selectedDate: Long,
-    val selectedHour: Int,
-    val selectedMinute: Int,
+//    val selectedDate: Long,
+//    val selectedHour: Int,
+//    val selectedMinute: Int,
 
     /* TODO we will be adding other states, like home screen costs and edit daily budget and so on... */
 )
@@ -69,15 +69,19 @@ data class HomeScreenCategoriesState(
 )
 
 data class HomeScreenAddExpenseStateData(
-    val amount: String,
+//    val amount: String,
+    val amount: Long?,
     /* TODO this could possible be some value class? */
     val categoryId: Int?,
 //    val categoryName: String,
     val description: String,
     /* TODO maybe this is not string */
-    val date: String,
-    /* TODO maybe this is not string */
-    val time: String,
+//    /* TODO maybe this is not string */
+//    val date: String,
+//    val time: String,
+    val date: Long,
+    val hour: Int,
+    val minute: Int,
 )
 
 data class HomeScreenAddCategoryStateData(

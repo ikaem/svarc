@@ -14,12 +14,8 @@ import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,13 +39,11 @@ import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_m
 import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenToggleDialogEvent
 import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenTimePickerDialogState
 import com.imkaem.android.svarc.core.utils.helpers.DateHelpers
-import com.imkaem.android.svarc.costs.domain.models.PeriodMonthModel
 import com.imkaem.android.svarc.costs.presentation.PickCategoryDialog
 import com.imkaem.android.svarc.ui.theme.ColorGreyDark
 import com.imkaem.android.svarc.ui.theme.ColorGreyLighter
 import com.imkaem.android.svarc.ui.theme.ColorWhite
 import kotlinx.coroutines.launch
-import java.util.Calendar
 import java.util.Locale
 import kotlin.time.ExperimentalTime
 
@@ -82,9 +76,9 @@ fun HomeScreenCostsActions(
 
 
     /* TODO only testing for now */
-    selectedDate: Long,
-    selectedHour: Int,
-    selectedMinute: Int,
+//    selectedDate: Long,
+//    selectedHour: Int,
+//    selectedMinute: Int,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -104,20 +98,24 @@ fun HomeScreenCostsActions(
     /* DATE PICKER */
     /* TODO we will move logic for date and time to viewModel later */
     /* TODO i think these picker states should be moved to our composable closest to the picker - the one that is actually recomposed, so that these states can be reinstantiated? */
-    val dateState = rememberDatePickerState(
-        /* TODO ok, it seems like we can specify here initial selected date */
-        initialSelectedDateMillis = selectedDate,
-    )
+//    val dateState = rememberDatePickerState(
+//        /* TODO ok, it seems like we can specify here initial selected date */
+//        initialSelectedDateMillis = selectedDate,
+//    )
 
 
     /* TIME PICKER */
-    val timeState = rememberTimePickerState(
-        initialHour = selectedHour,
-        initialMinute = selectedMinute,
-        is24Hour = true,
-    )
+//    val timeState = rememberTimePickerState(
+//        initialHour = selectedHour,
+//        initialMinute = selectedMinute,
+//        is24Hour = true,
+//    )
 
     /* edit daily budget state */
+    /* TODO not sure where this should live - maybe in view model?
+    * and then we can have state for it as normal, like other dialogs
+    * and we would also call .show() and .hide() on sheet state  from the view model
+    * */
     val editDailyBudgetBottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
@@ -131,7 +129,16 @@ fun HomeScreenCostsActions(
                 onDismissRequest = {
                     onToggleDialogEvent(HomeScreenToggleDialogEvent.ToggleTimePickerDialog)
                 },
-                timeState = timeState,
+                selectedHour = addExpenseState.data.hour,
+                selectedMinute = addExpenseState.data.minute,
+                onTimeChange = { hour, minute ->
+                    onAddExpenseEvent(
+                        HomeScreenAddExpenseEvent.UpdateTime(
+                            hour, minute
+                        )
+                    )
+                }
+//                timeState = timeState,
             )
         }
 
@@ -141,8 +148,15 @@ fun HomeScreenCostsActions(
                 onDismissRequest = {
                     onToggleDialogEvent(HomeScreenToggleDialogEvent.ToggleDatePickerDialog)
                 },
-                dateState = dateState,
+//                dateState = dateState,
+                selectedDate = addExpenseState.data.date,
+                onDateChange = {
+                    onAddExpenseEvent(
+                        HomeScreenAddExpenseEvent.UpdateDate(it)
+                    )
+                }
             )
+
         }
 
         categoryPickerDialogState.isShown -> {
@@ -223,35 +237,51 @@ fun HomeScreenCostsActions(
                     }
                 },
                 sheetState = addExpenseBottomSheetState,
-                amountValue = addExpenseState.data.amount,
+                amountValue = run {
+                    val amount = addExpenseState.data.amount
+                    if (amount == null) return@run ""
+                    return@run amount.toString()
+                },
                 onAmountChange = {
                     onAddExpenseEvent(HomeScreenAddExpenseEvent.UpdateAmount(it))
                 },
-                dateValue = dateState.selectedDateMillis?.let {
+//                dateValue = dateState.selectedDateMillis?.let {
+                dateValue = addExpenseState.data.date.let {
                     val instant = DateHelpers.millisecondsToInstant((it))
                     val formattedDate = DateHelpers.instantToLocalDateFormattedString(instant)
 
                     formattedDate
 //                } ?: currentTime.timeInMillis.let {
-                } ?: selectedDate.let {
-                    val instant = DateHelpers.millisecondsToInstant((it))
-                    val formattedDate = DateHelpers.instantToLocalDateFormattedString(instant)
-
-                    formattedDate
-
                 },
+//                    ?: selectedDate.let {
+//                    val instant = DateHelpers.millisecondsToInstant((it))
+//                    val formattedDate = DateHelpers.instantToLocalDateFormattedString(instant)
+//
+//                    formattedDate
+//
+//                },
                 onOpenDatePicker = {
                     onToggleDialogEvent(HomeScreenToggleDialogEvent.ToggleDatePickerDialog)
                 },
-                timeValue = timeState.let {
-                    val hour = timeState.hour
-                    val minute = timeState.minute
-
+//                timeValue = timeState.let {
+//                    val hour = timeState.hour
+//                    val minute = timeState.minute
+//
+//                    String.format(
+//                        Locale.getDefault(),
+//                        "%02d:%02d",
+//                        hour,
+//                        minute
+//                    )
+//                },
+                timeValue = run {
                     String.format(
                         Locale.getDefault(),
                         "%02d:%02d",
-                        hour,
-                        minute
+                        addExpenseState.data.hour,
+                        addExpenseState.data.minute,
+//                        selectedHour,
+//                        selectedMinute
                     )
                 },
                 onOpenTimePicker = {

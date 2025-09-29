@@ -26,8 +26,8 @@ sealed class HomeScreenAddExpenseEvent : HomeScreenEvent() {
         HomeScreenAddExpenseEvent()
 
     data class UpdateDescription(val description: String) : HomeScreenAddExpenseEvent()
-    data class UpdateDate(val date: String) : HomeScreenAddExpenseEvent()
-    data class UpdateTime(val time: String) : HomeScreenAddExpenseEvent()
+    data class UpdateDate(val date: Long) : HomeScreenAddExpenseEvent()
+    data class UpdateTime(val hours: Int, val minutes: Int) : HomeScreenAddExpenseEvent()
     /* NOTE: this is actual submission of new expense */
     object SubmitExpense : HomeScreenAddExpenseEvent()
 }

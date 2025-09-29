@@ -79,8 +79,11 @@ class HomeScreenViewModel : ViewModel() {
             )
 
             is HomeScreenAddExpenseEvent.UpdateDescription -> onAddExpenseChangeDescription(event.description)
-            is HomeScreenAddExpenseEvent.UpdateDate -> TODO()
-            is HomeScreenAddExpenseEvent.UpdateTime -> TODO()
+            is HomeScreenAddExpenseEvent.UpdateDate -> onAddExpenseChangeDate(event.date)
+            is HomeScreenAddExpenseEvent.UpdateTime -> onAddExpenseChangeTime(
+                event.hours,
+                event.minutes,
+            )
             /* TODO this is actually submit new event */
             HomeScreenAddExpenseEvent.SubmitExpense -> TODO()
         }
@@ -204,7 +207,10 @@ class HomeScreenViewModel : ViewModel() {
         }
     }
 
-    private fun onAddExpenseChangeAmount(amount: String) {
+    private fun onAddExpenseChangeAmount(value: String) {
+        val amount = value.toLongOrNull()
+        if (amount == null) return
+
         val newState = _state.value.copy(
             addExpenseState = _state.value.addExpenseState.copy(
                 data = _state.value.addExpenseState.data.copy(
@@ -238,6 +244,35 @@ class HomeScreenViewModel : ViewModel() {
             addExpenseState = _state.value.addExpenseState.copy(
                 data = _state.value.addExpenseState.data.copy(
                     description = description,
+                )
+            )
+        )
+
+        _state.update {
+            newState
+        }
+    }
+
+    private fun onAddExpenseChangeDate(date: Long) {
+        val newState = _state.value.copy(
+            addExpenseState = _state.value.addExpenseState.copy(
+                data = _state.value.addExpenseState.data.copy(
+                    date = date,
+                )
+            )
+        )
+
+        _state.update {
+            newState
+        }
+    }
+
+    private fun onAddExpenseChangeTime(hour: Int, minute: Int) {
+        val newState = _state.value.copy(
+            addExpenseState = _state.value.addExpenseState.copy(
+                data = _state.value.addExpenseState.data.copy(
+                    hour = hour,
+                    minute = minute,
                 )
             )
         )
@@ -378,15 +413,18 @@ class HomeScreenViewModel : ViewModel() {
             ),
             addExpenseState = HomeScreenAddExpenseState(
                 data = HomeScreenAddExpenseStateData(
-                    amount = "",
+                    amount = null,
                     /* TODO this should be some default */
                     /* TODO this should be retrieved i guess? */
                     /* TODO i am not sure if this is good to be null initially */
                     categoryId = null,
 //                    categoryName = "General",
                     description = "",
-                    date = "",
-                    time = "",
+//                    date = "",
+//                    time = "",
+                    date = nowMilliseconds,
+                    hour = nowHours,
+                    minute = nowMinutes,
                 ),
 
                 isLoading = true,
@@ -415,9 +453,9 @@ class HomeScreenViewModel : ViewModel() {
                 isLoading = false,
                 error = null,
             ),
-            selectedDate = nowMilliseconds,
-            selectedHour = nowHours,
-            selectedMinute = nowMinutes,
+//            selectedDate = nowMilliseconds,
+//            selectedHour = nowHours,
+//            selectedMinute = nowMinutes,
 
             /* TODO so here we have to calculate now actually*/
             /* TODO but now should only be calculated when we open the modal */
@@ -477,21 +515,38 @@ class HomeScreenViewModel : ViewModel() {
             error = null,
         )
 
-        val addExpensesState = HomeScreenAddExpenseState(
-            data = HomeScreenAddExpenseStateData(
-                amount = "",
-                /* TODO lets set first as default */
+        val addExpenseState = _state.value.addExpenseState.copy(
+            data = _state.value.addExpenseState.data.copy(
                 categoryId = categories.firstOrNull()?.id,
-                description = "",
-                /* TODO this needs to be adjusted so it initially shows now date and time
-                * will be handling this a bit later
-                * */
-                date = "",
-                time = "",
             ),
             isLoading = false,
             error = null,
         )
+
+//        val addExpensesState = HomeScreenAddExpenseState(
+//            /* TODO this should be populated only on open of dialog - lets take care of it later */
+//            data = _state.value.addExpenseState.data.copy(
+////                addExpenseState = _state.value.addExpenseState.copy(
+////                    data = _state.value.addExpenseState.data.copy(
+////                        categoryId = categories.firstOrNull()?.id,
+////                    )
+////                )
+//            ),
+//            isLoading = _state.value.addExpenseState.
+////            data = HomeScreenAddExpenseStateData(
+////                amount = null,
+////                /* TODO lets set first as default */
+////                categoryId = categories.firstOrNull()?.id,
+////                description = "",
+////                /* TODO this needs to be adjusted so it initially shows now date and time
+////                * will be handling this a bit later
+////                * */
+//////                date = "",
+//////                time = "",
+////            ),
+////            isLoading = false,
+////            error = null,
+//        )
 
         val editDailyBudgetState = HomeScreenEditDailyBudgetState(
             data = HomeScreenEditDailyBudgetStateData(
@@ -512,7 +567,7 @@ class HomeScreenViewModel : ViewModel() {
             expensesState = expensesState,
             categoriesState = categoriesState,
             monthPeriodsState = monthPeriodsState,
-            addExpenseState = addExpensesState,
+            addExpenseState = addExpenseState,
             addCategoryState = addCategoryState,
             editDailyBudgetState = editDailyBudgetState,
             selectedTab = selectedTab,
@@ -554,6 +609,12 @@ class HomeScreenViewModel : ViewModel() {
         )
         delay(1000)
         return categories
+    }
+
+    private suspend fun dummyAddExpenseUseCase(): List<ExpenseModel> {
+        /* TODO this will be a flow when real implementation arrives */
+
+        return emptyList()
     }
 
     private suspend fun dummyGetExpensesUseCase(): List<ExpenseModel> {

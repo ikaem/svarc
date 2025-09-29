@@ -44,9 +44,9 @@ fun HomeScreen(
                 onToggleDialogEvent = viewModel::onEvent,
                 modifier = Modifier.padding(horizontal = 10.dp),
                 /* TODO temp only */
-                selectedDate = state.selectedDate,
-                selectedHour = state.selectedHour,
-                selectedMinute = state.selectedMinute,
+//                selectedDate = state.selectedDate,
+//                selectedHour = state.selectedHour,
+//                selectedMinute = state.selectedMinute,
             )
 
             HorizontalDivider(
