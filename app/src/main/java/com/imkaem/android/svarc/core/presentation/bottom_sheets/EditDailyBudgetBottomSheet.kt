@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.sp
 import com.imkaem.android.svarc.core.presentation.widgets.CustomOptionsField
 import com.imkaem.android.svarc.core.presentation.widgets.CustomTextField
 import com.imkaem.android.svarc.core.utils.values.CustomOptionFieldValue
-import com.imkaem.android.svarc.costs.domain.models.PeriodMonthModel
+import com.imkaem.android.svarc.expenses.domain.models.PeriodMonthModel
 import com.imkaem.android.svarc.ui.theme.ColorBlue
 import com.imkaem.android.svarc.ui.theme.ColorGreyDark
 import com.imkaem.android.svarc.ui.theme.ColorGreyLight

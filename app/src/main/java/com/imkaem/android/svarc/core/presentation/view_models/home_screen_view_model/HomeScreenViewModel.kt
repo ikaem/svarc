@@ -2,9 +2,9 @@ package com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.imkaem.android.svarc.costs.domain.models.CategoryModel
-import com.imkaem.android.svarc.costs.domain.models.ExpenseModel
-import com.imkaem.android.svarc.costs.domain.models.PeriodMonthModel
+import com.imkaem.android.svarc.expenses.domain.models.CategoryModel
+import com.imkaem.android.svarc.expenses.domain.models.ExpenseModel
+import com.imkaem.android.svarc.expenses.domain.models.PeriodMonthModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

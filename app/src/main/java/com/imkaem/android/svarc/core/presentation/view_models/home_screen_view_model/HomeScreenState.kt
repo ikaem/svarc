@@ -1,8 +1,8 @@
 package com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model
 
-import com.imkaem.android.svarc.costs.domain.models.CategoryModel
-import com.imkaem.android.svarc.costs.domain.models.ExpenseModel
-import com.imkaem.android.svarc.costs.domain.models.PeriodMonthModel
+import com.imkaem.android.svarc.expenses.domain.models.CategoryModel
+import com.imkaem.android.svarc.expenses.domain.models.ExpenseModel
+import com.imkaem.android.svarc.expenses.domain.models.PeriodMonthModel
 
 data class HomeScreenState(
     val addExpenseState: HomeScreenAddExpenseState,

@@ -3,7 +3,7 @@ package com.imkaem.android.svarc.core.data.database
 import android.content.Context
 import androidx.room.Room
 import com.imkaem.android.svarc.SvarcApplication
-import com.imkaem.android.svarc.costs.data.database.ExpensesDao
+import com.imkaem.android.svarc.expenses.data.database.ExpensesDao
 
 /* TODO this is temp - will be removed once Hilt is introduced */
 object SvarcDatabaseInstance {

@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imkaem.android.svarc.core.presentation.widgets.CustomOptionsField
 import com.imkaem.android.svarc.core.utils.values.CustomOptionFieldValue
-import com.imkaem.android.svarc.costs.utils.values.DateSpentValue
+import com.imkaem.android.svarc.expenses.utils.values.DateSpentValue
 import com.imkaem.android.svarc.reports.utils.temp.TempDateSpentsGenerator
 import com.imkaem.android.svarc.reports.utils.values.GraphRowValue
 import com.imkaem.android.svarc.reports.utils.values.GraphRowValueConverters

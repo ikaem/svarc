@@ -39,7 +39,7 @@ import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_m
 import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenToggleDialogEvent
 import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenTimePickerDialogState
 import com.imkaem.android.svarc.core.utils.helpers.DateHelpers
-import com.imkaem.android.svarc.costs.presentation.PickCategoryDialog
+import com.imkaem.android.svarc.expenses.presentation.PickCategoryDialog
 import com.imkaem.android.svarc.ui.theme.ColorGreyDark
 import com.imkaem.android.svarc.ui.theme.ColorGreyLighter
 import com.imkaem.android.svarc.ui.theme.ColorWhite

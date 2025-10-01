@@ -1,6 +1,6 @@
 package com.imkaem.android.svarc.reports.utils.temp
 
-import com.imkaem.android.svarc.costs.utils.values.DateSpentValue
+import com.imkaem.android.svarc.expenses.utils.values.DateSpentValue
 import java.time.Instant
 import java.time.YearMonth
 import java.time.ZoneOffset

@@ -2,9 +2,9 @@ package com.imkaem.android.svarc.core.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.imkaem.android.svarc.costs.data.database.ExpensesDao
-import com.imkaem.android.svarc.costs.data.local.CategoryLocalEntity
-import com.imkaem.android.svarc.costs.data.local.ExpenseLocalEntity
+import com.imkaem.android.svarc.expenses.data.database.ExpensesDao
+import com.imkaem.android.svarc.expenses.data.local.CategoryLocalEntity
+import com.imkaem.android.svarc.expenses.data.local.ExpenseLocalEntity
 
 @Database(
     entities = [
