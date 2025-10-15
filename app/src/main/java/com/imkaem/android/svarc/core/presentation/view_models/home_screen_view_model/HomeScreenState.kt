@@ -5,6 +5,8 @@ import com.imkaem.android.svarc.expenses.domain.models.ExpenseModel
 import com.imkaem.android.svarc.expenses.domain.models.PeriodMonthModel
 
 data class HomeScreenState(
+    /* for main screen current tab */
+    val currentExpenses: List<ExpenseModel>,
     val addExpenseState: HomeScreenAddExpenseState,
     val expensesState: HomeScreenExpensesState,
     val addCategoryState: HomeScreenAddCategoryState,

@@ -29,7 +29,7 @@ import com.imkaem.android.svarc.ui.theme.ColorWhite
 fun GraphRows(
     rows: List<GraphRowValue>,
     /* TODO this is what we allow */
-    maxAmount: Int,
+    maxAmount: Long,
     modifier: Modifier = Modifier,
 ) {
 

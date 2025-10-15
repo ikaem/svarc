@@ -14,7 +14,7 @@ class GraphRowValueConverters {
 
         fun accumulatedRemainderGraphRowValuesFromDateSpendValues(
             dateSpents: List<DateSpentValue>,
-            dailyBudget: Int,
+            dailyBudget: Long,
         ): List<GraphRowValue> {
 
             /* ok, idea here is to:
@@ -86,6 +86,7 @@ class GraphRowValueConverters {
                 }
 
                 val rowValue = GraphRowValue(
+                    date = dateSpent.date,
                     title = title,
                     value = dayCurrentAccumulatedRemainder,
                     currency = "EUR",
@@ -156,7 +157,7 @@ class GraphRowValueConverters {
 
         fun dailyRemainderGraphRowValuesFromDateSpentValues(
             dateSpents: List<DateSpentValue>,
-            dailyBudget: Int,
+            dailyBudget: Long,
         ): List<GraphRowValue> {
             /* ok, how do we calculate this:
             * we need eacch day remainder value?
@@ -205,6 +206,7 @@ class GraphRowValueConverters {
                 }
 
                 val rowValue = GraphRowValue(
+                    date = dateSpent.date,
                     title = title,
                     value = remainderAmount,
                     currency = "EUR",
@@ -220,7 +222,7 @@ class GraphRowValueConverters {
 
         fun spentGraphRowValuesFromDateSpentValues(
             dateSpents: List<DateSpentValue>,
-            dailyBudget: Int,
+            dailyBudget: Long,
         ): List<GraphRowValue> {
 
             /* TODO this should actually have max value of daily budget */
@@ -241,7 +243,7 @@ class GraphRowValueConverters {
         /* TODO tep */
         private fun spentGraphRowValueFromDateSpentValue(
             dateSpent: DateSpentValue,
-            dailyBudget: Int,
+            dailyBudget: Long,
         ): GraphRowValue {
             val factor = 100.00 / dailyBudget
 
@@ -267,6 +269,7 @@ class GraphRowValueConverters {
             }
 
             return GraphRowValue(
+                date = dateSpent.date,
                 title = title,
                 value = dateSpent.amount,
                 currency = "EUR",

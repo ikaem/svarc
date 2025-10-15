@@ -11,6 +11,7 @@ class TempDateSpentsGenerator {
 
     companion object {
 
+        /* TODO this is not temp - we actually need this epsewhere */
         fun fillMonthDateSpentsGaps(
 
             dateSpents: List<DateSpentValue>,
@@ -101,7 +102,7 @@ class TempDateSpentsGenerator {
             val dateSpents = daysList.map { day ->
 
                 val randomNumber = (1..10).random()
-                val amount = randomNumber * 100
+                val amount = (randomNumber * 100).toLong()
 
                 val zonedDateTime: ZonedDateTime = ZonedDateTime.of(
                     year,

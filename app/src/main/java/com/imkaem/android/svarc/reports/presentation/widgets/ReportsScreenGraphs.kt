@@ -72,7 +72,7 @@ fun ReportsScreenGraphs() {
 //            amount = ((index + 1) * 3) * 100
 //        )
 //    }
-    val dailyBudget = 300
+    val dailyBudget = 300.toLong()
 
     val spentGraphRowValues = GraphRowValueConverters.spentGraphRowValuesFromDateSpentValues(
         dateSpents = dateSpents,

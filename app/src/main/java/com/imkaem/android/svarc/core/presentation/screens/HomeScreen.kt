@@ -13,7 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenChangeTabEvent
 import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenViewModel
-import com.imkaem.android.svarc.core.presentation.widgets.HomeScreenAllCosts
+import com.imkaem.android.svarc.core.presentation.widgets.HomeScreenAllExpenses
 import com.imkaem.android.svarc.core.presentation.widgets.HomeScreenCurrentCosts
 
 @Composable
@@ -22,6 +22,8 @@ fun HomeScreen(
 ) {
     val viewModel: HomeScreenViewModel = viewModel()
     val state = viewModel.state.collectAsStateWithLifecycle().value
+
+    val currentExpenses = state.currentExpenses
 
     Scaffold { padding ->
         Column(
@@ -60,8 +62,10 @@ fun HomeScreen(
                 },
                 tabLabels = listOf("Current", "All expenses"),
                 tabs = listOf(
-                    { HomeScreenCurrentCosts() },
-                    { HomeScreenAllCosts() }
+                    { HomeScreenCurrentCosts(
+                        currentExpenses = state.currentExpenses,
+                    ) },
+                    { HomeScreenAllExpenses(state.expensesState.expenses) }
                 ),
                 modifier = Modifier.padding(horizontal = 10.dp)
             )

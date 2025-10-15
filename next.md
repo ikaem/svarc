@@ -1,4 +1,11 @@
-1. add dummy use case to submit new expenses
+1. forget all of these converters and shit - lets just convert in ui for now
+2. ------
+2. 
+3. 
+4. we actually need to pass all expenses to all expeses tab
+2. and we need to calcluate today and this week expenses, and pass them to current expenses tab
+- view model should calculate that i guess
+3. add dummy use case to submit new expenses
 - need some value class for that 
 2. add database
 - first add dummy DI

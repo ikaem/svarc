@@ -5,12 +5,22 @@ import androidx.lifecycle.viewModelScope
 import com.imkaem.android.svarc.expenses.domain.models.CategoryModel
 import com.imkaem.android.svarc.expenses.domain.models.ExpenseModel
 import com.imkaem.android.svarc.expenses.domain.models.PeriodMonthModel
+import com.imkaem.android.svarc.expenses.utils.values.CreateExpenseValue
+import com.imkaem.android.svarc.expenses.utils.values.DateSpentValue
+import com.imkaem.android.svarc.reports.utils.temp.TempDateSpentsGenerator
+import com.imkaem.android.svarc.reports.utils.values.GraphRowValueConverters
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Duration
 import java.time.Instant
+import java.time.YearMonth
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.Temporal
 import java.util.Calendar
 
 /* TODO maybe good to separate setting state for different parts of state
@@ -85,7 +95,7 @@ class HomeScreenViewModel : ViewModel() {
                 event.minutes,
             )
             /* TODO this is actually submit new event */
-            HomeScreenAddExpenseEvent.SubmitExpense -> TODO()
+            HomeScreenAddExpenseEvent.SubmitExpense -> onAddExpenseSubmit()
         }
     }
 
@@ -176,6 +186,8 @@ class HomeScreenViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 /* TODO this needs to be improved, maybe some specific exception types */
+
+                /* TODO this is wrong state - we should be adjust add category state instead */
                 val newCategoryState = HomeScreenCategoriesState(
                     categories = _state.value.categoriesState.categories,
                     isLoading = false,
@@ -280,6 +292,90 @@ class HomeScreenViewModel : ViewModel() {
         _state.update {
             newState
         }
+    }
+
+    private fun onAddExpenseSubmit() {
+
+        /* TODO also, dont do it if loading... */
+
+        val addExpenseStateData = _state.value.addExpenseState.data
+        /* TODO some validation should be done where? not sure maybe in use case */
+        val isValid = validateAddExpenseState(addExpenseStateData)
+        if (!isValid) {
+            return
+        }
+
+        /* TODO we might be unnecessarily accessing state twice - it might change in meantime? */
+
+        /* TODO need to pass dispatcher and */
+        viewModelScope.launch {
+            try {
+                /* TODO values should probably be sanitized or something? we will see where that happens */
+                val newExpenses = dummyAddExpenseUseCase(
+                    amount = addExpenseStateData.amount!!,
+                    categoryId = addExpenseStateData.categoryId!!,
+                    description = addExpenseStateData.description,
+                    date = addExpenseStateData.date,
+                    hour = addExpenseStateData.hour,
+                    minute = addExpenseStateData.minute,
+                )
+
+                val newExpensesState = HomeScreenExpensesState(
+                    expenses = newExpenses,
+                    isLoading = false,
+                    error = null,
+                )
+
+                val newState = _state.value.copy(
+                    expensesState = newExpensesState,
+                    /* TODO we should probably reset the AddExpenseState*/
+                )
+
+                _state.update {
+                    newState
+                }
+            } catch (e: Exception) {
+                /* TODO this needs to be improved - maybe some specific exception type */
+                val addExpenseState = _state.value.addExpenseState.copy(
+                    isLoading = false,
+                    error = e.message,
+                )
+
+                val newState = _state.value.copy(
+                    addExpenseState = addExpenseState
+                )
+
+                _state.update {
+                    newState
+                }
+            }
+        }
+    }
+
+    private fun validateAddExpenseState(addExpenseStateData: HomeScreenAddExpenseStateData): Boolean {
+
+        /* TODO should add validation stuff here - to validate state */
+        /* TODO should we also emit some kind of state to indicate which fields are invalid */
+
+        val amount = addExpenseStateData.amount
+        /* TODO we can allow negative values, because some expenses can be refunds or something ? */
+        if (amount == null) {
+            return false
+        }
+
+        val categoryId = addExpenseStateData.categoryId
+        if (categoryId == null) {
+            return false
+        }
+
+        val description = addExpenseStateData.description
+        /* NOTE we can actually allow creation of expenses in past, so we are good */
+        val date = addExpenseStateData.date
+        val hour = addExpenseStateData.hour
+        val minute = addExpenseStateData.minute
+
+        return true
+
     }
 
     private fun onEditDailyBudgetChangeAmount(amount: String) {
@@ -394,6 +490,8 @@ class HomeScreenViewModel : ViewModel() {
 
 
         return HomeScreenState(
+            currentExpenses = emptyList(),
+            /* TODO just separator to remind that this above needs to be a real state */
             expensesState = HomeScreenExpensesState(
                 expenses = emptyList(),
                 isLoading = true,
@@ -489,6 +587,9 @@ class HomeScreenViewModel : ViewModel() {
         val expenses = dummyGetExpensesUseCase()
         val monthPeriods = dummyGetMonthPeriodsUseCase()
 
+        /* TODO temp */
+        val currentExpenses = dummyGetCurrentExpensesUseCase()
+
         val categoriesState = HomeScreenCategoriesState(
             categories = categories,
             isLoading = false,
@@ -564,6 +665,8 @@ class HomeScreenViewModel : ViewModel() {
 
 
         val newState = _state.value.copy(
+            /* TODO temp */
+            currentExpenses = currentExpenses,
             expensesState = expensesState,
             categoriesState = categoriesState,
             monthPeriodsState = monthPeriodsState,
@@ -582,6 +685,243 @@ class HomeScreenViewModel : ViewModel() {
     }
 
     /* TODO dummy use cases - will be delegated to real stuff later */
+
+    /* TODO for now we return list of this month's expenses */
+    private suspend fun dummyGetCurrentExpensesUseCase(): List<ExpenseModel> {
+
+        /* so here we get this month expenses in total */
+        val now = Instant.now().atZone(ZoneOffset.UTC)
+
+        val year = now.year
+        val month = now.monthValue
+        val day = 1
+
+
+        val startOfMonth = ZonedDateTime.of(
+            year,
+            month,
+            day,
+            0, 0, 0, 0,
+            ZoneOffset.UTC
+        ).toInstant()
+
+        /* TODO i am not sure of this works */
+        val startoOfNextMonth = startOfMonth.plus(
+            Duration.ofDays(YearMonth.of(year, month).lengthOfMonth().toLong())
+        )
+
+        val currentMonthExpenses = dummyExpenses.filter { expense ->
+            if(expense.dateTime < startOfMonth) return@filter false
+            if(expense.dateTime >= startoOfNextMonth) return@filter false
+
+            return@filter true
+        }
+
+
+        /* TODO this should return some kind of object that contains reports for current period  */
+
+        /* so we need to
+        * reduce expenses into day expenses
+        * populate non-existing days with 0 values
+        * calculate this months reports - we already do this in reports screen
+        *
+        * */
+
+        val expensesByDay = currentMonthExpenses.groupBy { expense ->
+
+            /* this creates zoned date time */
+            val zonedDateTime = expense.dateTime.atZone(ZoneOffset.UTC)
+
+            /* now we get just day */
+            val day = zonedDateTime.dayOfMonth
+
+            /* and we want to group by day */
+
+            day
+        }
+
+        /* now we want to reduce each day expenses to 1 */
+
+        val dayExpenses = expensesByDay.map { entry ->
+
+            /* ok, now we get day */
+            val day = entry.key
+
+            val expensesForDay = entry.value
+            val totalForDay = expensesForDay.sumOf { it.amount }
+            val date = expensesForDay.first().dateTime
+
+            val dateYear = date.atZone(ZoneOffset.UTC).year
+            val dateMonth = date.atZone(ZoneOffset.UTC).monthValue
+            val dateDay = date.atZone(ZoneOffset.UTC).dayOfMonth
+
+            val normalizedDate = ZonedDateTime.of(
+                dateYear,
+                dateMonth,
+                dateDay,
+                0,0,0,0,
+                ZoneOffset.UTC
+            ).toInstant()
+
+            val dateSpentValue = DateSpentValue(
+                amount = totalForDay,
+                date = normalizedDate,
+            )
+
+
+            return@map dateSpentValue
+        }
+
+        /* TODO this logic also exists in ReportScreenGraphs.kt*/
+
+
+        val completeMonthDateSpents = TempDateSpentsGenerator.fillMonthDateSpentsGaps(
+            year = year,
+            month = month,
+            dateSpents = dayExpenses,
+        )
+
+        /* TODO OK, now we need to calculate spents */
+
+        val budget = 600L
+        val spentGraphRowValues = GraphRowValueConverters.spentGraphRowValuesFromDateSpentValues(
+            completeMonthDateSpents,
+            budget
+        )
+
+        val dailyRemainderGraphRowValues = GraphRowValueConverters.dailyRemainderGraphRowValuesFromDateSpentValues(
+            completeMonthDateSpents,
+            budget
+        )
+
+        val accumulatedRemainderGraphRowValues = GraphRowValueConverters.accumulatedRemainderGraphRowValuesFromDateSpendValues(
+            completeMonthDateSpents,
+            budget
+        )
+
+
+        val nowAgain = Instant.now().atZone(ZoneOffset.UTC)
+        val nowYear = nowAgain.year
+        val nowMonth = nowAgain.monthValue
+        val nowDay = nowAgain.dayOfMonth
+
+        val normalizedInstant = ZonedDateTime.of(
+            nowYear,
+            nowMonth,
+            nowDay,
+            0,0,0,0,
+            ZoneOffset.UTC
+        ).toInstant()
+        /* ok, now we need to find today, this week, and this month reports */
+        val todayReportSpentGraphRowValue = spentGraphRowValues.first { value ->
+
+            /* get normalized date again for the current value  */
+
+            val valueDate = value.date.atZone(ZoneOffset.UTC)
+            val valueYear = valueDate.year
+            val valueMonth = valueDate.monthValue
+            val valueDay = valueDate.dayOfMonth
+
+            val normalizedValueDate = ZonedDateTime.of(
+                valueYear,
+                valueMonth,
+                valueDay,
+                0,0,0,0,
+                ZoneOffset.UTC
+            ).toInstant()
+
+            return@first normalizedValueDate == normalizedInstant
+        }
+
+        val thisMonthReportSpentGraphRowValue = spentGraphRowValues.last()
+
+        /* TODO and now for the week */
+
+        /* lets find all sundays */
+        val allSundaysInMonthSpentGraphRowValues = spentGraphRowValues.filter { it ->
+
+            /* ok, lets get day for each row value */
+            val valueDate = it.date
+            val utcLocalDate = valueDate.atZone(ZoneOffset.UTC)
+
+            /* using this
+            * https://stackoverflow.com/a/54439448/9661910
+            * */
+            val formatter = DateTimeFormatter.ofPattern("EEEE")
+
+
+            val dayOfWeekString = utcLocalDate.format(formatter)
+
+
+            println("dayOfWeekString: $dayOfWeekString")
+
+
+            if (dayOfWeekString == "Sunday") {
+                return@filter true
+            }
+
+            false
+
+
+        }
+
+        /* now we have all sunday
+        * lets now loop through them, and find the one that is closest to current day
+        *
+        * we can get rid of all previous sundays, because they are not relevant
+        * then we we just need to find the first one
+        * */
+
+        val allNowOrFutureSundays = allSundaysInMonthSpentGraphRowValues.filter { it ->
+
+            val valueDate = it.date
+
+            if(valueDate.isBefore(normalizedInstant)) {
+                false
+            } else {
+                true
+            }
+        }
+
+        /* TODO this is not true */
+
+        /* here actually we have to accumulate all of spendings up to that date, but only for the current week - so we have to make a sublist from previous monday to upcoming sunday, and calculate all spending */
+        val thisWeekReportSpentGraphRowValue = allNowOrFutureSundays.first()
+
+
+
+
+        /* TODO ok, now we only need last value of the month reports, current day, */
+
+        /* TODO we can also calculate the week report by:
+        * split month into weeks
+        * find last day of each week or last day of the month
+        * so we can find every suday in the month - thats last day of the week
+        * get current day
+        * find which last day of each week is the closest to current day
+        * thats our week report
+        * */
+
+        /* lets find all sundays in that month repor */
+
+
+        return currentMonthExpenses
+
+        /* how to get week? when does week start? lets say week starts monday? and if it is partially in previous or next month, we just in ignore it? month has a precedence?
+        * maybe we dont even need week for now?
+        * */
+
+        /* so this returns expenses for:
+        * today
+        * this week
+        * this month
+        *
+        * TODO maybe we can reuse already existing logic on reports - that
+        * */
+
+        /* TODO so we can calculate this month
+        *   - and then just return values */
+    }
 
     private suspend fun dummyGetMonthPeriodsUseCase(): List<PeriodMonthModel> {
         val monthPeriods = listOf(
@@ -611,65 +951,52 @@ class HomeScreenViewModel : ViewModel() {
         return categories
     }
 
-    private suspend fun dummyAddExpenseUseCase(): List<ExpenseModel> {
+    private suspend fun dummyAddExpenseUseCase(
+        amount: Long,
+        categoryId: Int,
+        description: String,
+        date: Long,
+        hour: Int,
+        minute: Int,
+    ): List<ExpenseModel> {
         /* TODO this will be a flow when real implementation arrives */
 
-        return emptyList()
+        /* TODO this is just proforma */
+        /* TODO will need some converter for this */
+        val hourInMillis = hour * 60 * 60 * 1000  // hour * 60 minutes * 60 seconds * 1000 millis
+        val minuteInMillis = minute * 60 * 1000 // minute * 60 seconds * 1000 millis
+
+        val dateTimeMillis = date + hourInMillis + minuteInMillis
+
+        val createExpenseValue = CreateExpenseValue(
+            amount = amount,
+            currency = "EUR",
+            description = description,
+            categoryId = categoryId,
+            dateTimeMillis = dateTimeMillis,
+        )
+
+        val id = _state.value.expensesState.expenses.size + 1
+
+        val newExpense = ExpenseModel(
+            id = id,
+            amount = createExpenseValue.amount,
+            currency = createExpenseValue.currency,
+            dateTime = Instant.ofEpochMilli(createExpenseValue.dateTimeMillis),
+            description = createExpenseValue.description,
+            category = _state.value.categoriesState.categories.first { it.id == categoryId },
+        )
+
+        val newExpenses = _state.value.expensesState.expenses + newExpense
+
+        return newExpenses
     }
 
     private suspend fun dummyGetExpensesUseCase(): List<ExpenseModel> {
         /* TODO this will be a flow when real implementation arrives */
-        val expenses = listOf<ExpenseModel>(
-            ExpenseModel(
-                1,
-                700,
-                "EUR",
-                Instant.now(),
-                "Some description",
-                CategoryModel(1, "Health")
-            ),
-            ExpenseModel(
-                2,
-                1500,
-                "EUR",
-                Instant.now(),
-                "Some description",
-                CategoryModel(2, "Home")
-            ),
-            ExpenseModel(
-                3,
-                500,
-                "EUR",
-                Instant.now(),
-                "Some description",
-                CategoryModel(3, "Food")
-            ),
-            ExpenseModel(
-                4,
-                2000,
-                "EUR",
-                Instant.now(),
-                "Some description",
-                CategoryModel(4, "Social")
-            ),
-            ExpenseModel(
-                5,
-                1200,
-                "EUR",
-                Instant.now(),
-                "Some description",
-                CategoryModel(5, "Sport")
-            ),
-            ExpenseModel(
-                6,
-                300,
-                "EUR",
-                Instant.now(),
-                "Some description",
-                CategoryModel(7, "Other")
-            ),
-        )
+
         delay(1000)
+        val expenses = dummyExpenses
         return expenses
     }
 
@@ -727,3 +1054,70 @@ class HomeScreenViewModel : ViewModel() {
     }
 }
 
+/* TODO temp only */
+private val dummyExpenses = listOf<ExpenseModel>(
+    ExpenseModel(
+        1,
+        700,
+        "EUR",
+        Instant.now(),
+        "Some description",
+        CategoryModel(1, "Health")
+    ),
+    ExpenseModel(
+        2,
+        1500,
+        "EUR",
+        Instant.now(),
+        "Some description",
+        CategoryModel(2, "Home")
+    ),
+    ExpenseModel(
+        3,
+        500,
+        "EUR",
+        Instant.now().plusMillis(1 * 24 * 60 * 60 * 1000),
+        "Some description",
+        CategoryModel(3, "Food")
+    ),
+    ExpenseModel(
+        4,
+        2000,
+        "EUR",
+        Instant.now().plusMillis(1 * 24 * 60 * 60 * 1000),
+        "Some description",
+        CategoryModel(4, "Social")
+    ),
+    ExpenseModel(
+        5,
+        1200,
+        "EUR",
+        Instant.now().plusMillis(2 * 24 * 60 * 60 * 1000),
+        "Some description",
+        CategoryModel(5, "Sport")
+    ),
+    ExpenseModel(
+        6,
+        300,
+        "EUR",
+        Instant.now().plusMillis(2 * 24 * 60 * 60 * 1000),
+        "Some description",
+        CategoryModel(7, "Other")
+    ),
+    ExpenseModel(
+        7,
+        900,
+        "EUR",
+        Instant.now().plusMillis(3 * 24 * 60 * 60 * 1000),
+        "Some description",
+        CategoryModel(6, "Some longer category name")
+    ),
+    ExpenseModel(
+        8,
+        400,
+        "EUR",
+        Instant.now().plusMillis(3 * 24 * 60 * 60 * 1000),
+        "Some description",
+        CategoryModel(1, "Health")
+    ),
+)

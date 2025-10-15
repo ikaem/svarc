@@ -1,12 +1,14 @@
 package com.imkaem.android.svarc.reports.utils.values
 
+import java.time.Instant
 import java.util.Locale
 
 /* TODO maybe this should be a model, not sure */
 data class GraphRowValue(
+    val date: Instant,
     val title: String,
     /* TODO keep in mind this is in cents */
-    val value: Int,
+    val value: Long,
     val currency: String,
     val valueRowWeight: Float,
     val remainderRowWeight: Float,

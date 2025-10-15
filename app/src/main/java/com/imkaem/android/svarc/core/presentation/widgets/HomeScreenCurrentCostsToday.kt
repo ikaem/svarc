@@ -25,14 +25,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imkaem.android.svarc.ui.theme.ColorGreen
 import com.imkaem.android.svarc.ui.theme.ColorRed
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenCurrentCostsToday(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    todayPeriodSpentValue: PeriodSpentValue?,
 ) {
-
-
     Column(
         modifier = modifier
     ) {
@@ -69,7 +69,17 @@ fun HomeScreenCurrentCostsToday(
                     fontSize = 12.sp,
                 )
                 Text(
-                    "12 EUR",
+//                    "12 EUR",
+                    todayPeriodSpentValue.let { it ->
+
+                        val majorDenominator = 100.00
+                        val amount = it?.amount ?: 0
+
+                        val major = amount / majorDenominator
+                        val output = String.format(Locale.getDefault(), "%.2f EUR", major)
+
+                        output
+                    },
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                 )
@@ -87,7 +97,7 @@ fun HomeScreenCurrentCostsToday(
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     color = ColorRed,
-                    )
+                )
             }
         }
     }
