@@ -6,6 +6,7 @@ import com.imkaem.android.svarc.expenses.domain.models.PeriodMonthModel
 
 data class HomeScreenState(
     /* for main screen current tab */
+    /* TODO we are missing current month daily budget state */
     val currentExpenses: List<ExpenseModel>,
     val addExpenseState: HomeScreenAddExpenseState,
     val expensesState: HomeScreenExpensesState,

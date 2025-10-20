@@ -23,15 +23,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.imkaem.android.svarc.ui.theme.ColorGreen
-import com.imkaem.android.svarc.ui.theme.ColorRed
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenCurrentCostsToday(
-    modifier: Modifier = Modifier,
     todayPeriodSpentValue: PeriodSpentValue?,
+    todayPeriodRemainderAmountReportValue: PeriodSpentValue?,
+    todayPeriodAccumulatedRemainderAmountReportValue: PeriodSpentValue?,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
@@ -47,30 +47,71 @@ fun HomeScreenCurrentCostsToday(
                 .fillMaxWidth()
         ) {
             TooltipedMetricSubtitle(
-                subtitle = "Accumulated remainder",
-                tooltipContent = "Amount of money left from previous days, minus what you have spent today."
+                subtitle = "Spent",
+                tooltipContent = "Total amount of money spent today.",
             )
             Spacer(Modifier.height(5.dp))
+
             Text(
-                "4 EUR",
+                todayPeriodSpentValue.let { it ->
+
+                    /* TODO this should be extracted, as it will be reused in other period UIs*/
+                    /* maybe even as some kind of extension */
+
+                    val majorDenominator = 100.00
+                    val amount = it?.amount ?: 0
+
+                    val major = amount / majorDenominator
+                    val output = String.format(Locale.getDefault(), "%.2f EUR", major)
+
+                    output
+                },
                 fontSize = 40.sp,
                 fontWeight = FontWeight.Bold,
-                color = ColorGreen,
             )
         }
         Spacer(Modifier.height(10.dp))
 
         Row {
             Column {
-//                Text("Spent")
                 TooltipedMetricSubtitle(
-                    subtitle = "Spent",
-                    tooltipContent = "Total amount of money spent today.",
+                    subtitle = "Remainder",
+                    tooltipContent = "Amount of money left from your daily budget after today's spending.",
                     fontSize = 12.sp,
                 )
                 Text(
-//                    "12 EUR",
-                    todayPeriodSpentValue.let { it ->
+                    todayPeriodRemainderAmountReportValue.let { it ->
+
+                        /* TODO this should be extracted, as it will be reused in other period UIs*/
+                        /* maybe even as some kind of extension */
+
+                        val majorDenominator = 100.00
+                        val amount = it?.amount ?: 0
+
+                        val major = amount / majorDenominator
+                        val output = String.format(Locale.getDefault(), "%.2f EUR", major)
+
+                        output
+                    },
+
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+            Spacer(Modifier.width(50.dp))
+            Column(
+            ) {
+                TooltipedMetricSubtitle(
+                    subtitle = "Accumulated remainder",
+                    tooltipContent = "Amount of money left from previous days, minus what you have spent today. Amount is calculated based on your daily budget in context of the current month.",
+                    fontSize = 12.sp,
+
+                    )
+                Text(
+                    todayPeriodAccumulatedRemainderAmountReportValue.let { it ->
+
+                        /* TODO this should be extracted, as it will be reused in other period UIs*/
+                        /* maybe even as some kind of extension */
 
                         val majorDenominator = 100.00
                         val amount = it?.amount ?: 0
@@ -85,20 +126,6 @@ fun HomeScreenCurrentCostsToday(
                 )
             }
             Spacer(Modifier.width(50.dp))
-            Column {
-//                Text("Remainder")
-                TooltipedMetricSubtitle(
-                    subtitle = "Remainder",
-                    tooltipContent = "Amount of money left from your daily budget after today's spending.",
-                    fontSize = 12.sp,
-                )
-                Text(
-                    "-2 EUR",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = ColorRed,
-                )
-            }
         }
     }
 }

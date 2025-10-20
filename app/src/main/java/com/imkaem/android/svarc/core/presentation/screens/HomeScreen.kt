@@ -64,6 +64,8 @@ fun HomeScreen(
                 tabs = listOf(
                     { HomeScreenCurrentCosts(
                         currentExpenses = state.currentExpenses,
+                        /* TODO this is very temp hardcoding - this should come from the view model state */
+                        dailyBudget = 1000L
                     ) },
                     { HomeScreenAllExpenses(state.expensesState.expenses) }
                 ),
