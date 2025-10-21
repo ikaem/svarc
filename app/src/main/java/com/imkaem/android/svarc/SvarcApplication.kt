@@ -1,6 +1,7 @@
 package com.imkaem.android.svarc
 
 import android.app.Application
+import android.content.Context
 
 class SvarcApplication : Application() {
 
@@ -13,6 +14,6 @@ class SvarcApplication : Application() {
 
         private lateinit var app: SvarcApplication
 
-        fun getApplicationContext() = app.applicationContext
+        fun getApplicationContext(): Context = app.applicationContext
     }
 }

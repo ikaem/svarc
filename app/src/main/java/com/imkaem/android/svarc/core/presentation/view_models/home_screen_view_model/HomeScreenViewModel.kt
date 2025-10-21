@@ -2,6 +2,7 @@ package com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.imkaem.android.svarc.core.utils.temp.TempDI
 import com.imkaem.android.svarc.expenses.domain.models.CategoryModel
 import com.imkaem.android.svarc.expenses.domain.models.ExpenseModel
 import com.imkaem.android.svarc.expenses.domain.models.PeriodMonthModel
@@ -23,12 +24,21 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.Temporal
 import java.util.Calendar
 
+
+
+
+
+
 /* TODO maybe good to separate setting state for different parts of state
 * https://trello.com/c/pnDpu2A4
 *
 * */
 /* TODO in trello, there is a card with ai suggestions. check it, apply events for user when they interact with view model */
 class HomeScreenViewModel : ViewModel() {
+
+    /* TODO this will be injected via hilt later */
+    val createExpenseUseCase = TempDI.createExpenseUseCase
+
     private val _state = MutableStateFlow<HomeScreenState>(
         generateInitialState()
     )
@@ -310,6 +320,18 @@ class HomeScreenViewModel : ViewModel() {
         /* TODO need to pass dispatcher and */
         viewModelScope.launch {
             try {
+
+
+                /* TODO just attemp for now */
+                createExpenseUseCase(
+                    amount = addExpenseStateData.amount!!,
+                    categoryId = addExpenseStateData.categoryId!!,
+                    description = addExpenseStateData.description,
+                    date = addExpenseStateData.date,
+                    hour = addExpenseStateData.hour,
+                    minute = addExpenseStateData.minute,
+                )
+
                 /* TODO values should probably be sanitized or something? we will see where that happens */
                 val newExpenses = dummyAddExpenseUseCase(
                     amount = addExpenseStateData.amount!!,

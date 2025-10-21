@@ -190,7 +190,8 @@ fun AddExpenseModalBottomSheet(
 //                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Button(
-                    onClick = onCancel,
+//                    onClick = onCancel,
+                    onClick = onSave,
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(5.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -201,7 +202,7 @@ fun AddExpenseModalBottomSheet(
 
                 }
                 Button(
-                    onClick = onSave,
+                    onClick = onCancel,
 //                    onClick = {
 //                        /* clean all */
 //                        selectedCategoryState.value = null

@@ -1,4 +1,5 @@
-1. forget all of these converters and shit - lets just convert in ui for now
+1. look in create expense use case tTODO
+2. forget all of these converters and shit - lets just convert in ui for now
 2. ------
 2. 
 3. 

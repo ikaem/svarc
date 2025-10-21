@@ -301,11 +301,12 @@ fun HomeScreenCostsActions(
                 },
                 onCancel = {
 
-                    onAddExpenseEvent
+//                    onAddExpenseEvent
                 },
                 onSave = {
                     /* TODO not really sure what to do here yet */
 
+                    onAddExpenseEvent(HomeScreenAddExpenseEvent.SubmitExpense)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
