@@ -1,4 +1,6 @@
-1. look in create expense use case tTODO
+1. figure out how to
+   2. get actual category together with expense
+      3. do we manually have to join, or room will join automatically when foreign key is set
 2. forget all of these converters and shit - lets just convert in ui for now
 2. ------
 2. 

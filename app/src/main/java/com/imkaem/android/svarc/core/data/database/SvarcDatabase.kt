@@ -4,6 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.imkaem.android.svarc.expenses.data.database.CategoriesDao
 import com.imkaem.android.svarc.expenses.data.database.ExpensesDao
 import com.imkaem.android.svarc.expenses.data.entities.local.CategoryLocalEntity
 import com.imkaem.android.svarc.expenses.data.entities.local.ExpenseLocalEntity
@@ -18,6 +19,7 @@ import com.imkaem.android.svarc.expenses.data.entities.local.ExpenseLocalEntity
 )
 abstract class SvarcDatabase : RoomDatabase() {
     abstract val expensesDao: ExpensesDao
+    abstract val categoriesDao: CategoriesDao
 }
 
 val migration_1_2 = object : Migration(1, 2) {

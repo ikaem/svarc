@@ -1,5 +1,6 @@
 package com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imkaem.android.svarc.core.utils.temp.TempDI
@@ -38,6 +39,7 @@ class HomeScreenViewModel : ViewModel() {
 
     /* TODO this will be injected via hilt later */
     val createExpenseUseCase = TempDI.createExpenseUseCase
+    val getCategoriesUseCase = TempDI.getCategoriesUseCase
 
     private val _state = MutableStateFlow<HomeScreenState>(
         generateInitialState()
@@ -47,6 +49,7 @@ class HomeScreenViewModel : ViewModel() {
 
     init {
         loadAndPopulateState()
+
     }
 
     fun onEvent(event: HomeScreenEvent) {
@@ -593,6 +596,7 @@ class HomeScreenViewModel : ViewModel() {
 
             /* populate state */
             generatePopulatedState()
+
         }
     }
 
@@ -605,7 +609,9 @@ class HomeScreenViewModel : ViewModel() {
     private suspend fun generatePopulatedState() {
         /* TODO maybe should be passing io dispatcher and adding explict error handler here */
         /* TODO this should be separated i guess, as per comment and link at the top of this file */
-        val categories = dummyGetCategoriesUseCase()
+//        val categories = dummyGetCategoriesUseCase()
+        /* TODO temp only tis */
+        val categories = getCategoriesUseCase()
         val expenses = dummyGetExpensesUseCase()
         val monthPeriods = dummyGetMonthPeriodsUseCase()
 
@@ -894,21 +900,21 @@ class HomeScreenViewModel : ViewModel() {
         * then we we just need to find the first one
         * */
 
-        val allNowOrFutureSundays = allSundaysInMonthSpentGraphRowValues.filter { it ->
-
-            val valueDate = it.date
-
-            if(valueDate.isBefore(normalizedInstant)) {
-                false
-            } else {
-                true
-            }
-        }
-
-        /* TODO this is not true */
-
-        /* here actually we have to accumulate all of spendings up to that date, but only for the current week - so we have to make a sublist from previous monday to upcoming sunday, and calculate all spending */
-        val thisWeekReportSpentGraphRowValue = allNowOrFutureSundays.first()
+//        val allNowOrFutureSundays = allSundaysInMonthSpentGraphRowValues.filter { it ->
+//
+//            val valueDate = it.date
+//
+//            if(valueDate.isBefore(normalizedInstant)) {
+//                false
+//            } else {
+//                true
+//            }
+//        }
+//
+//        /* TODO this is not true */
+//
+//        /* here actually we have to accumulate all of spendings up to that date, but only for the current week - so we have to make a sublist from previous monday to upcoming sunday, and calculate all spending */
+//        val thisWeekReportSpentGraphRowValue = allNowOrFutureSundays.first()
 
 
 

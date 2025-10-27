@@ -5,28 +5,34 @@ import com.imkaem.android.svarc.expenses.data.data_sources.ExpensesLocalDataSour
 import com.imkaem.android.svarc.expenses.data.database.ExpensesDao
 import com.imkaem.android.svarc.expenses.data.repositories.ExpensesRepository
 import com.imkaem.android.svarc.expenses.domain.use_cases.CreateExpenseUseCase
+import com.imkaem.android.svarc.expenses.domain.use_cases.GetCategoriesUseCase
+
+private val DATABASE_INSTANCE = SvarcDatabaseInstance
+private val EXPENSES_DAO = DATABASE_INSTANCE.expensesDao()
+private val CATEGORIES_DAO = DATABASE_INSTANCE.categoriesDao()
 
 
-val EXPENSES_DAO: ExpensesDao = SvarcDatabaseInstance.expensesDao()
-
-
-val EXPENSES_LOCAL_DATA_SOURCE by lazy {
+private val EXPENSES_LOCAL_DATA_SOURCE by lazy {
     ExpensesLocalDataSource(
-        expensesDao = EXPENSES_DAO
+        expensesDao = EXPENSES_DAO,
+        categoriesDao = CATEGORIES_DAO
     )
 }
 
-val EXPENSES_REPOSITORY by lazy {
+private val EXPENSES_REPOSITORY by lazy {
     ExpensesRepository(
         expensesLocalDataSource = EXPENSES_LOCAL_DATA_SOURCE
     )
 }
 
 
-
 object TempDI {
 
     val createExpenseUseCase = CreateExpenseUseCase(
+        expensesRepository = EXPENSES_REPOSITORY
+    )
+
+    val getCategoriesUseCase = GetCategoriesUseCase(
         expensesRepository = EXPENSES_REPOSITORY
     )
 }

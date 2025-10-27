@@ -20,19 +20,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-//            SvarcTheme {
-//                /* TODO lets leave this scaffold for now*/
-//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//                    SvarcComposableApp(
-//                        modifier = Modifier.padding(innerPadding)
-//                    )
-////                    Greeting(
-////                        name = "Android",
-////                        modifier = Modifier.padding(innerPadding)
-////                    )
-//                }
-//            }
-
             SvarcTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize()
@@ -43,19 +30,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-//@Composable
-//fun Greeting(name: String, modifier: Modifier = Modifier) {
-//    Text(
-//        text = "Hello $name!",
-//        modifier = modifier
-//    )
-//}
-
-//@Preview(showBackground = true)
-//@Composable
-//fun GreetingPreview() {
-//    SvarcTheme {
-//        Greeting("Android")
-//    }
-//}

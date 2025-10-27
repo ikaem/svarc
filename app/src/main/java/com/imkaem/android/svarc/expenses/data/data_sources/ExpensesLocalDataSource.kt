@@ -1,15 +1,20 @@
 package com.imkaem.android.svarc.expenses.data.data_sources
 
+import android.util.Log
+import com.imkaem.android.svarc.expenses.data.database.CategoriesDao
 import com.imkaem.android.svarc.expenses.data.database.ExpensesDao
+import com.imkaem.android.svarc.expenses.data.entities.local.CategoryLocalEntity
 import com.imkaem.android.svarc.expenses.data.entities.local.ExpenseLocalEntity
 import com.imkaem.android.svarc.expenses.utils.values.CreateExpenseValue
 
 /* TODO should make interfaces for this */
 class ExpensesLocalDataSource(
     private val expensesDao: ExpensesDao,
+    private val categoriesDao: CategoriesDao,
 ) {
 
-    suspend fun addOne(expenseValue: CreateExpenseValue): Long {
+    /* expenses */
+    suspend fun addExpense(expenseValue: CreateExpenseValue): Long {
         val expenseLocalEntity = ExpenseLocalEntity(
             amount = expenseValue.amount,
             currency = expenseValue.currency,
@@ -20,7 +25,20 @@ class ExpensesLocalDataSource(
 
         val id = expensesDao.add(expenseLocalEntity)
 
-        return id
+        Log.d("ExpensesLocalDataSource", "Added expense with id: $id")
 
+        return id
+    }
+
+    suspend fun getExpenses(): List<ExpenseLocalEntity> {
+        val expenses = expensesDao.getAll()
+        return expenses
+    }
+
+    /* categories */
+    suspend fun getCategories(): List<CategoryLocalEntity> {
+        val categories = categoriesDao.getAll()
+        return categories
     }
 }
+
