@@ -14,7 +14,7 @@ import com.imkaem.android.svarc.expenses.data.entities.local.ExpenseLocalEntity
         ExpenseLocalEntity::class,
         CategoryLocalEntity::class,
     ],
-    version = 2,
+    version = 1,
     exportSchema = true,
 )
 abstract class SvarcDatabase : RoomDatabase() {
@@ -22,13 +22,12 @@ abstract class SvarcDatabase : RoomDatabase() {
     abstract val categoriesDao: CategoriesDao
 }
 
-val migration_1_2 = object : Migration(1, 2) {
-    override fun migrate(db: SupportSQLiteDatabase) {
-        /* as per https://stackoverflow.com/questions/15497985/how-to-add-unique-constraint-to-existing-table-in-sqlite*/
-        db.execSQL(
-            "CREATE UNIQUE INDEX index_category_name ON categories(name)"
-
-        )
-    }
-
-}
+//val migration_1_2 = object : Migration(1, 2) {
+//    override fun migrate(db: SupportSQLiteDatabase) {
+//        /* as per https://stackoverflow.com/questions/15497985/how-to-add-unique-constraint-to-existing-table-in-sqlite*/
+//        db.execSQL(
+//            "CREATE UNIQUE INDEX index_category_name ON categories(name)"
+//
+//        )
+//    }
+//}

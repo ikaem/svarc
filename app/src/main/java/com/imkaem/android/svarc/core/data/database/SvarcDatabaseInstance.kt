@@ -26,7 +26,7 @@ object SvarcDatabaseInstance {
             DATABASE_NAME,
         )
             .addMigrations(
-                migration_1_2
+//                migration_1_2
             )
             /* TODO testing this */
             .addCallback(object : RoomDatabase.Callback() {

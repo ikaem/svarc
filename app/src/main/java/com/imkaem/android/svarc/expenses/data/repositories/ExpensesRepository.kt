@@ -20,27 +20,29 @@ class ExpensesRepository(
 
     suspend fun getExpenses(): List<ExpenseModel> {
         val entities = expensesLocalDataSource.getExpenses()
-        val models = entities.map { entity ->
-            val instant = Instant.ofEpochMilli(entity.dateTimeMillis)
+//        val models = entities.map { entity ->
+//            val instant = Instant.ofEpochMilli(entity.dateTimeMillis)
+//
+//
+//            ExpenseModel(
+//                id = entity.id,
+//                amount = entity.amount,
+//                currency = entity.currency,
+//                description = entity.description,
+//                dateTime = instant,
+//                category = CategoryModel(
+//                    id = 12,
+//                    name = "entity.category.name",
+//                )
+//
+//            )
+//
+//
+//        }
 
+//        return models
 
-            ExpenseModel(
-                id = entity.id,
-                amount = entity.amount,
-                currency = entity.currency,
-                description = entity.description,
-                dateTime = instant,
-                category = CategoryModel(
-                    id = 12,
-                    name = "entity.category.name",
-                )
-
-            )
-
-
-        }
-
-        return models
+        return emptyList()
     }
 
     suspend fun getCategories(): List<CategoryModel> {

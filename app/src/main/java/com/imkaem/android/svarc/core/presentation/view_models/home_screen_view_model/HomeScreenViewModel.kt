@@ -41,6 +41,8 @@ class HomeScreenViewModel : ViewModel() {
     val createExpenseUseCase = TempDI.createExpenseUseCase
     val getCategoriesUseCase = TempDI.getCategoriesUseCase
 
+    val getExpensesUseCase = TempDI.getExpensesUseCase
+
     private val _state = MutableStateFlow<HomeScreenState>(
         generateInitialState()
     )
@@ -615,6 +617,8 @@ class HomeScreenViewModel : ViewModel() {
         val expenses = dummyGetExpensesUseCase()
         val monthPeriods = dummyGetMonthPeriodsUseCase()
 
+        val realExpenses = getExpensesUseCase()
+
         /* TODO temp */
         val currentExpenses = dummyGetCurrentExpensesUseCase()
 
@@ -1007,7 +1011,8 @@ class HomeScreenViewModel : ViewModel() {
         val id = _state.value.expensesState.expenses.size + 1
 
         val newExpense = ExpenseModel(
-            id = id,
+//            id = id,
+            id = id.toLong(),
             amount = createExpenseValue.amount,
             currency = createExpenseValue.currency,
             dateTime = Instant.ofEpochMilli(createExpenseValue.dateTimeMillis),
