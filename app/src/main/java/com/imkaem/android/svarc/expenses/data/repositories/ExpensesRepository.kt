@@ -18,31 +18,29 @@ class ExpensesRepository(
         return id
     }
 
-    suspend fun getExpenses(): List<ExpenseModel> {
-        val entities = expensesLocalDataSource.getExpenses()
-//        val models = entities.map { entity ->
-//            val instant = Instant.ofEpochMilli(entity.dateTimeMillis)
-//
-//
-//            ExpenseModel(
-//                id = entity.id,
-//                amount = entity.amount,
-//                currency = entity.currency,
-//                description = entity.description,
-//                dateTime = instant,
-//                category = CategoryModel(
-//                    id = 12,
-//                    name = "entity.category.name",
-//                )
-//
-//            )
-//
-//
-//        }
+    suspend fun getExpensesWithCategories(): List<ExpenseModel> {
+        val pojos = expensesLocalDataSource.getExpensesWithCategories()
 
-//        return models
+        val models = pojos.map { pojo ->
 
-        return emptyList()
+            val dateTime = Instant.ofEpochMilli(pojo.expense.dateTimeMillis)
+
+            val model = ExpenseModel(
+                id = pojo.expense.id,
+                amount = pojo.expense.amount,
+                currency = pojo.expense.currency,
+                dateTime = dateTime,
+                description = pojo.expense.description,
+                category = CategoryModel(
+                    id = pojo.category.id,
+                    name = pojo.category.name,
+                )
+            )
+            model
+        }
+
+        return models
+
     }
 
     suspend fun getCategories(): List<CategoryModel> {

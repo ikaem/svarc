@@ -1,4 +1,6 @@
-1. figure out how to
+1. ok, finally use hilt now - database works kinda...
+2. 
+3. figure out how to
    2. get actual category together with expense
       3. do we manually have to join, or room will join automatically when foreign key is set
 2. forget all of these converters and shit - lets just convert in ui for now
@@ -18,3 +20,10 @@
 
 # thoughts
 maybe costs is not a greate name for feature layer? maybe expenses is better?
+
+
+
+3. resources for join db
+   4. https://medium.com/android-news/android-architecture-components-room-relationships-bf473510c14a
+   5. https://proandroiddev.com/room-database-lessons-learnt-from-working-with-multiple-tables-d499c9be94ce
+   6. https://medium.com/@manishkumar_75473/android-room-database-series-part-3-relationship-a-note-taking-example-c96fc25284e9

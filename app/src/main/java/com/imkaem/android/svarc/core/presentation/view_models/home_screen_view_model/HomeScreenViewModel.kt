@@ -1,6 +1,5 @@
 package com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imkaem.android.svarc.core.utils.temp.TempDI
@@ -22,7 +21,6 @@ import java.time.YearMonth
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.time.temporal.Temporal
 import java.util.Calendar
 
 
@@ -41,7 +39,7 @@ class HomeScreenViewModel : ViewModel() {
     val createExpenseUseCase = TempDI.createExpenseUseCase
     val getCategoriesUseCase = TempDI.getCategoriesUseCase
 
-    val getExpensesUseCase = TempDI.getExpensesUseCase
+    val getExpensesWithCategoriesUseCase = TempDI.getExpensesWithCategoriesUseCase
 
     private val _state = MutableStateFlow<HomeScreenState>(
         generateInitialState()
@@ -614,10 +612,10 @@ class HomeScreenViewModel : ViewModel() {
 //        val categories = dummyGetCategoriesUseCase()
         /* TODO temp only tis */
         val categories = getCategoriesUseCase()
-        val expenses = dummyGetExpensesUseCase()
+//        val expenses = dummyGetExpensesUseCase()
         val monthPeriods = dummyGetMonthPeriodsUseCase()
 
-        val realExpenses = getExpensesUseCase()
+        val realExpensesWithCategories = getExpensesWithCategoriesUseCase()
 
         /* TODO temp */
         val currentExpenses = dummyGetCurrentExpensesUseCase()
@@ -629,7 +627,7 @@ class HomeScreenViewModel : ViewModel() {
         )
 
         val expensesState = HomeScreenExpensesState(
-            expenses = expenses,
+            expenses = realExpensesWithCategories,
             isLoading = false,
             error = null,
         )

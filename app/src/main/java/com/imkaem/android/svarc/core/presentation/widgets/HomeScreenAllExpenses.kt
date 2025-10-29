@@ -26,7 +26,7 @@ fun HomeScreenAllExpenses(
 
         ) {
             items(
-                count = 16,
+                count = expenses.size,
                 key = { index -> index }
             ) { index ->
                 val expense = expenses[index]

@@ -2,11 +2,10 @@ package com.imkaem.android.svarc.core.utils.temp
 
 import com.imkaem.android.svarc.core.data.database.SvarcDatabaseInstance
 import com.imkaem.android.svarc.expenses.data.data_sources.ExpensesLocalDataSource
-import com.imkaem.android.svarc.expenses.data.database.ExpensesDao
 import com.imkaem.android.svarc.expenses.data.repositories.ExpensesRepository
 import com.imkaem.android.svarc.expenses.domain.use_cases.CreateExpenseUseCase
 import com.imkaem.android.svarc.expenses.domain.use_cases.GetCategoriesUseCase
-import com.imkaem.android.svarc.expenses.domain.use_cases.GetExpensesUseCase
+import com.imkaem.android.svarc.expenses.domain.use_cases.GetExpensesWithCategoriesUseCase
 
 private val DATABASE_INSTANCE = SvarcDatabaseInstance
 private val EXPENSES_DAO = DATABASE_INSTANCE.expensesDao()
@@ -37,7 +36,7 @@ object TempDI {
         expensesRepository = EXPENSES_REPOSITORY
     )
 
-    val getExpensesUseCase = GetExpensesUseCase(
+    val getExpensesWithCategoriesUseCase = GetExpensesWithCategoriesUseCase(
         expensesRepository = EXPENSES_REPOSITORY
     )
 }

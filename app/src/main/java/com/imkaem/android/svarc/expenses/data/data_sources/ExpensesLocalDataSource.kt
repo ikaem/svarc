@@ -5,6 +5,7 @@ import com.imkaem.android.svarc.expenses.data.database.CategoriesDao
 import com.imkaem.android.svarc.expenses.data.database.ExpensesDao
 import com.imkaem.android.svarc.expenses.data.entities.local.CategoryLocalEntity
 import com.imkaem.android.svarc.expenses.data.entities.local.ExpenseLocalEntity
+import com.imkaem.android.svarc.expenses.data.entities.local.ExpenseWithCategoryPojo
 import com.imkaem.android.svarc.expenses.utils.values.CreateExpenseValue
 
 /* TODO should make interfaces for this */
@@ -30,9 +31,9 @@ class ExpensesLocalDataSource(
         return id
     }
 
-    suspend fun getExpenses(): List<ExpenseLocalEntity> {
-        val expenses = expensesDao.getAll()
-        return expenses
+    suspend fun getExpensesWithCategories(): List<ExpenseWithCategoryPojo> {
+        val expensesWithCategories = expensesDao.getAllWithCategories()
+        return expensesWithCategories
     }
 
     /* categories */
