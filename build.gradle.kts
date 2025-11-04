@@ -6,4 +6,6 @@ plugins {
     /* room */
     alias(libs.plugins.room) apply false
     alias(libs.plugins.devtools.ksp) apply false
+    /* hilt */
+    alias(libs.plugins.hilt.android) apply false
 }

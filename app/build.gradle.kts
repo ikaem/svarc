@@ -7,6 +7,8 @@ plugins {
     /* room */
     alias(libs.plugins.room)
     alias(libs.plugins.devtools.ksp)
+    /* hilt */
+    alias(libs.plugins.hilt.android)
 }
 
 android {
@@ -54,6 +56,10 @@ android {
 }
 
 dependencies {
+    /* hilt */
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)
     /* room */
     ksp(libs.room.compiler)
     implementation(libs.room.runtime)
