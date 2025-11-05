@@ -2,12 +2,14 @@ package com.imkaem.android.svarc
 
 import android.app.Application
 import android.content.Context
+import dagger.hilt.android.HiltAndroidApp
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+@HiltAndroidApp
 class SvarcApplication : Application() {
 
     init {

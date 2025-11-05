@@ -2,14 +2,18 @@ package com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.imkaem.android.svarc.core.utils.temp.TempDI
+//import com.imkaem.android.svarc.core.utils.temp.TempDI
 import com.imkaem.android.svarc.expenses.domain.models.CategoryModel
 import com.imkaem.android.svarc.expenses.domain.models.ExpenseModel
 import com.imkaem.android.svarc.expenses.domain.models.PeriodMonthModel
+import com.imkaem.android.svarc.expenses.domain.use_cases.CreateExpenseUseCase
+import com.imkaem.android.svarc.expenses.domain.use_cases.GetCategoriesUseCase
+import com.imkaem.android.svarc.expenses.domain.use_cases.GetExpensesWithCategoriesUseCase
 import com.imkaem.android.svarc.expenses.utils.values.CreateExpenseValue
 import com.imkaem.android.svarc.expenses.utils.values.DateSpentValue
 import com.imkaem.android.svarc.reports.utils.temp.TempDateSpentsGenerator
 import com.imkaem.android.svarc.reports.utils.values.GraphRowValueConverters
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,10 +26,7 @@ import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
-
-
-
-
+import javax.inject.Inject
 
 
 /* TODO maybe good to separate setting state for different parts of state
@@ -33,13 +34,18 @@ import java.util.Calendar
 *
 * */
 /* TODO in trello, there is a card with ai suggestions. check it, apply events for user when they interact with view model */
-class HomeScreenViewModel : ViewModel() {
+@HiltViewModel
+class HomeScreenViewModel @Inject constructor(
+    private val createExpenseUseCase: CreateExpenseUseCase,
+    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val getExpensesWithCategoriesUseCase: GetExpensesWithCategoriesUseCase
+) : ViewModel() {
 
     /* TODO this will be injected via hilt later */
-    val createExpenseUseCase = TempDI.createExpenseUseCase
-    val getCategoriesUseCase = TempDI.getCategoriesUseCase
+//    val createExpenseUseCase = TempDI.createExpenseUseCase
+//    val getCategoriesUseCase = TempDI.getCategoriesUseCase
 
-    val getExpensesWithCategoriesUseCase = TempDI.getExpensesWithCategoriesUseCase
+//    val getExpensesWithCategoriesUseCase = TempDI.getExpensesWithCategoriesUseCase
 
     private val _state = MutableStateFlow<HomeScreenState>(
         generateInitialState()

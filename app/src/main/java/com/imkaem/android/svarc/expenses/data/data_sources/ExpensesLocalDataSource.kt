@@ -7,9 +7,13 @@ import com.imkaem.android.svarc.expenses.data.entities.local.CategoryLocalEntity
 import com.imkaem.android.svarc.expenses.data.entities.local.ExpenseLocalEntity
 import com.imkaem.android.svarc.expenses.data.entities.local.ExpenseWithCategoryPojo
 import com.imkaem.android.svarc.expenses.utils.values.CreateExpenseValue
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /* TODO should make interfaces for this */
-class ExpensesLocalDataSource(
+/* TODO not suee if we should have this level - the data source before the actual lib - but lets try it */
+@Singleton
+class ExpensesLocalDataSource @Inject constructor(
     private val expensesDao: ExpensesDao,
     private val categoriesDao: CategoriesDao,
 ) {

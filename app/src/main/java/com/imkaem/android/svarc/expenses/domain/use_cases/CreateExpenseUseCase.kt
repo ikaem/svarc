@@ -2,8 +2,9 @@ package com.imkaem.android.svarc.expenses.domain.use_cases
 
 import com.imkaem.android.svarc.expenses.data.repositories.ExpensesRepository
 import com.imkaem.android.svarc.expenses.utils.values.CreateExpenseValue
+import javax.inject.Inject
 
-class CreateExpenseUseCase(
+class CreateExpenseUseCase @Inject constructor(
     private val expensesRepository: ExpensesRepository,
 ) {
     suspend operator fun invoke(

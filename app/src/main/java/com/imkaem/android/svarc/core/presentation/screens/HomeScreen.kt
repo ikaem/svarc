@@ -9,6 +9,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model.HomeScreenChangeTabEvent
@@ -20,7 +21,8 @@ import com.imkaem.android.svarc.core.presentation.widgets.HomeScreenCurrentCosts
 fun HomeScreen(
     onNavigateToReports: () -> Unit,
 ) {
-    val viewModel: HomeScreenViewModel = viewModel()
+//    val viewModel: HomeScreenViewModel = viewModel()
+    val viewModel: HomeScreenViewModel = hiltViewModel()
     val state = viewModel.state.collectAsStateWithLifecycle().value
 
     val currentExpenses = state.currentExpenses

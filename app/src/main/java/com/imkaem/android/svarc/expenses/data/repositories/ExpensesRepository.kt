@@ -5,9 +5,16 @@ import com.imkaem.android.svarc.expenses.domain.models.CategoryModel
 import com.imkaem.android.svarc.expenses.domain.models.ExpenseModel
 import com.imkaem.android.svarc.expenses.utils.values.CreateExpenseValue
 import java.time.Instant
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /* TODO we need interface in domain layer for this */
-class ExpensesRepository(
+
+/* TODO maybe we should not have another level of data source
+* but, maybe we should, lets see how it goes
+* */
+@Singleton
+class ExpensesRepository @Inject constructor(
     private val expensesLocalDataSource: ExpensesLocalDataSource,
 ) {
 

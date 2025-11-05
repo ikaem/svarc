@@ -22,6 +22,7 @@ abstract class SvarcDatabase : RoomDatabase() {
     abstract val categoriesDao: CategoriesDao
 }
 
+/* THIS MIGRATION IS NOT NECESSARY RIGHT NOW */
 //val migration_1_2 = object : Migration(1, 2) {
 //    override fun migrate(db: SupportSQLiteDatabase) {
 //        /* as per https://stackoverflow.com/questions/15497985/how-to-add-unique-constraint-to-existing-table-in-sqlite*/

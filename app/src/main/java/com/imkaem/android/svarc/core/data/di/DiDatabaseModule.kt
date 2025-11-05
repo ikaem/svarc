@@ -1,33 +1,53 @@
-package com.imkaem.android.svarc.core.data.database
+package com.imkaem.android.svarc.core.data.di
 
 import android.content.Context
-import android.util.Log
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.imkaem.android.svarc.SvarcApplication
+import com.imkaem.android.svarc.core.data.database.SvarcDatabase
 import com.imkaem.android.svarc.expenses.data.database.CategoriesDao
 import com.imkaem.android.svarc.expenses.data.database.ExpensesDao
-import com.imkaem.android.svarc.expenses.data.entities.local.CategoryLocalEntity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-/* TODO this is temp - will be removed once Hilt is introduced */
-object SvarcDatabaseInstance {
 
-    private const val DATABASE_NAME = "svarc_database"
+@Module
+@InstallIn(SingletonComponent::class)
+object DiDatabaseModule {
 
-    /* TODO lets leave here, because of lazy */
-    private val database: SvarcDatabase by lazy {
-        Room.databaseBuilder(
-            SvarcApplication.getApplicationContext(),
+    @Provides
+    fun provideExpensesDao(database: SvarcDatabase): ExpensesDao {
+        return database.expensesDao
+    }
+
+    @Provides
+    fun provideCategoriesDao(database: SvarcDatabase): CategoriesDao {
+        return database.categoriesDao
+    }
+
+
+    @Singleton
+    @Provides
+    fun provideRoomDatabase(
+        @ApplicationContext appContext: Context
+    ): SvarcDatabase {
+
+
+        val database = Room.databaseBuilder(
+            appContext,
             SvarcDatabase::class.java,
-            DATABASE_NAME,
+            "svarc_database",
         )
+            /* we dont want to drop, for now at least */
+//            .fallbackToDestructiveMigration(
+//                dropAllTables = true,
+//            )
             .addMigrations(
-//                migration_1_2
+                /* no migrations as of yet */
             )
             /* TODO testing this */
             .addCallback(object : RoomDatabase.Callback() {
@@ -62,13 +82,8 @@ object SvarcDatabaseInstance {
                 }
             })
             .build()
-    }
 
-    fun expensesDao(): ExpensesDao {
-        return database.expensesDao
-    }
 
-    fun categoriesDao(): CategoriesDao {
-        return database.categoriesDao
+        return database;
     }
 }
