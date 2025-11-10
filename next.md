@@ -1,4 +1,22 @@
-1. lets add button do add or delete all expenses
+1. ok, need use case to getCurrentExpenses
+   2. so it would get current expenses for this month i guess 
+   3. but it will get it as a flow of list of expenses
+   4. maybe then it can convert to flow of object that holds current expenses:
+        5. total for today
+        7. total for this month
+      8. which view model can observe, and update ui state
+         9. question here, is it ok to have use case retrun (flow of) objects that are state?
+            10. so it would be holding three PeriodSpentValues - spent, remainder, accumulated remainder for today 
+            11. it would hold spent, month budget, remainder for month
+                12. so what are these classes? ui state classes? or domain classes? i guess they are state classes, because they will be rendered directly in ui
+13. ok, so
+    14. add use case 
+    15. add data source, repo, dao
+    16. make use case convert all expenses from this month to these values 
+        17. we need to have some kind of wrappear class as well - to make sure we can emit both od period values together
+2. 
+3. -----------------------------
+4. lets add button do add or delete all expenses
    2. this is for testing purpose
    3. lets add a view model for this 
       4. it will have to use cases - add dummy expenses, delete all expenses
@@ -35,7 +53,7 @@ maybe costs is not a greate name for feature layer? maybe expenses is better?
 
 
 
-3. resources for join db
+3. resources for join db - leave here 
    4. https://medium.com/android-news/android-architecture-components-room-relationships-bf473510c14a
    5. https://proandroiddev.com/room-database-lessons-learnt-from-working-with-multiple-tables-d499c9be94ce
    6. https://medium.com/@manishkumar_75473/android-room-database-series-part-3-relationship-a-note-taking-example-c96fc25284e9

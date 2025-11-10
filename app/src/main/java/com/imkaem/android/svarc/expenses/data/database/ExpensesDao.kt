@@ -16,9 +16,13 @@ interface ExpensesDao {
     @Query("SELECT * FROM EXPENSES ORDER BY date_time_millis ASC")
     suspend fun getAll(): List<ExpenseLocalEntity>
 
+    /* TODO this needs to be converted to flow */
     @Transaction
     @Query("SELECT * FROM expenses ORDER BY date_time_millis ASC")
     suspend fun getAllWithCategories(): List<ExpenseWithCategoryPojo>
+
+
+
 
     @Insert()
     suspend fun add(expense: ExpenseLocalEntity): Long

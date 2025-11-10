@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.imkaem.android.svarc.core.utils.extensions.toDayEnd
 import com.imkaem.android.svarc.core.utils.extensions.toDayStart
+import com.imkaem.android.svarc.core.utils.values.PeriodAmountValue
 import com.imkaem.android.svarc.expenses.domain.models.ExpenseModel
 import com.imkaem.android.svarc.expenses.utils.values.DateSpentValue
 import com.imkaem.android.svarc.ui.theme.ColorGreyLight
@@ -104,18 +105,18 @@ fun HomeScreenCurrentCosts(
 
 /* TODO this should potentially be called differently - because it is not only spent value - it should be used for daily remainder and accumulated remainder */
 /* TODO maybe PeriodAmountReportValue? */
-data class PeriodSpentValue(
-    /* this is both inclusive */
-    val startDate: Instant,
-    val endDate: Instant,
-    val amount: Long,
-)
+//data class PeriodSpentValue(
+//    /* this is both inclusive */
+//    val startDate: Instant,
+//    val endDate: Instant,
+//    val amount: Long,
+//)
 
 /// accumulated remainder values
 private fun getTodayPeriodAccumulatedRemainderAmountReportValue(
     monthDateSpents: List<DateSpentValue>,
     dailyBudget: Long,
-): PeriodSpentValue? {
+): PeriodAmountValue? {
     if (monthDateSpents.isEmpty()) {
         return null
     }
@@ -129,7 +130,7 @@ private fun getTodayPeriodAccumulatedRemainderAmountReportValue(
     * */
 
 
-    val dailyPeriodAccumulatedRemainderAmountReportValues = mutableListOf<PeriodSpentValue>()
+    val dailyPeriodAccumulatedRemainderAmountReportValues = mutableListOf<PeriodAmountValue>()
 
     for (dateSpent in monthDateSpents) {
         /* calculate start period instant */
@@ -150,7 +151,7 @@ private fun getTodayPeriodAccumulatedRemainderAmountReportValue(
         val normalizedDayStartInstant = dateSpent.date.toDayStart()
         val normalizedDayEndInstant = dateSpent.date.toDayEnd()
 
-        val accumulatedRemainderAmountReportValue = PeriodSpentValue(
+        val accumulatedRemainderAmountReportValue = PeriodAmountValue(
             startDate = normalizedDayStartInstant,
             endDate = normalizedDayEndInstant,
             amount = todayAccumulatedRemainder
@@ -180,7 +181,7 @@ private fun getTodayPeriodAccumulatedRemainderAmountReportValue(
 private fun getTodayPeriodRemainderAmountReportValue(
     monthDateSpents: List<DateSpentValue>,
     dailyBudget: Long,
-): PeriodSpentValue? {
+): PeriodAmountValue? {
 
 
     if (monthDateSpents.isEmpty()) {
@@ -222,7 +223,7 @@ private fun getTodayPeriodRemainderAmountReportValue(
     val todaySpentAmount = todayDateSpent.amount
     val todayRemainderAmount = dailyBudget - todaySpentAmount
 
-    val todayPeriodRemainderAmountReportValue = PeriodSpentValue(
+    val todayPeriodRemainderAmountReportValue = PeriodAmountValue(
         startDate = normalizedTodayStartInstant,
         endDate = normalizedTodayEndInstant,
         amount = todayRemainderAmount,
@@ -235,7 +236,7 @@ private fun getTodayPeriodRemainderAmountReportValue(
 private fun getThisMonthPeriodRemainderAmountReportValue(
     monthDateSpents: List<DateSpentValue>,
     dailyBudget: Long,
-): PeriodSpentValue? {
+): PeriodAmountValue? {
 
     if (monthDateSpents.isEmpty()) {
         return null
@@ -272,7 +273,7 @@ private fun getThisMonthPeriodRemainderAmountReportValue(
     ).toInstant()
 
 
-    val thisMonthPeriodRemainderAmountReportValue = PeriodSpentValue(
+    val thisMonthPeriodRemainderAmountReportValue = PeriodAmountValue(
         startDate = normalizedMonthStartInstant,
         endDate = normalizedMonthEndInstant,
         amount = monthRemainderAmount,
@@ -286,7 +287,7 @@ private fun getThisMonthPeriodRemainderAmountReportValue(
 
 private fun getCurrentMonthPeriodSpentValue(
     monthDateSpents: List<DateSpentValue>
-): PeriodSpentValue? {
+): PeriodAmountValue? {
 
     if (monthDateSpents.isEmpty()) {
         return null
@@ -315,7 +316,7 @@ private fun getCurrentMonthPeriodSpentValue(
 
     val monthSpentAmount = monthDateSpents.sumOf { it.amount }
 
-    val monthPeriodSpentValue = PeriodSpentValue(
+    val monthPeriodSpentValue = PeriodAmountValue(
         startDate = normalizedMonthStartInstant,
         endDate = normalizedMonthEndInstant,
         amount = monthSpentAmount,
@@ -328,7 +329,7 @@ private fun getCurrentMonthPeriodSpentValue(
 
 private fun getTodayPeriodSpentValue(
     monthDateSpents: List<DateSpentValue>
-): PeriodSpentValue? {
+): PeriodAmountValue? {
 
     if (monthDateSpents.isEmpty()) {
         return null
@@ -367,7 +368,7 @@ private fun getTodayPeriodSpentValue(
 
     val todaySpentAmount = todayDateSpent.amount
 
-    val todayPeriodSpentValue = PeriodSpentValue(
+    val todayPeriodSpentValue = PeriodAmountValue(
         startDate = normalizedTodayStartInstant,
         endDate = normalizedTodayEndInstant,
         amount = todaySpentAmount,
