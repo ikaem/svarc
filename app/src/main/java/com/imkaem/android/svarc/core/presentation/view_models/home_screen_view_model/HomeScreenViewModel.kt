@@ -41,12 +41,6 @@ class HomeScreenViewModel @Inject constructor(
     private val getExpensesWithCategoriesUseCase: GetExpensesWithCategoriesUseCase
 ) : ViewModel() {
 
-    /* TODO this will be injected via hilt later */
-//    val createExpenseUseCase = TempDI.createExpenseUseCase
-//    val getCategoriesUseCase = TempDI.getCategoriesUseCase
-
-//    val getExpensesWithCategoriesUseCase = TempDI.getExpensesWithCategoriesUseCase
-
     private val _state = MutableStateFlow<HomeScreenState>(
         generateInitialState()
     )
@@ -55,7 +49,6 @@ class HomeScreenViewModel @Inject constructor(
 
     init {
         loadAndPopulateState()
-
     }
 
     fun onEvent(event: HomeScreenEvent) {

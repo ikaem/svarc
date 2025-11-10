@@ -29,7 +29,6 @@ class ExpensesRepository @Inject constructor(
         val pojos = expensesLocalDataSource.getExpensesWithCategories()
 
         val models = pojos.map { pojo ->
-
             val dateTime = Instant.ofEpochMilli(pojo.expense.dateTimeMillis)
 
             val model = ExpenseModel(
@@ -47,7 +46,15 @@ class ExpensesRepository @Inject constructor(
         }
 
         return models
+    }
 
+    suspend fun addAllExpenses(expenses: List<CreateExpenseValue>): List<Long> {
+        val ids = expensesLocalDataSource.addAllExpenses(expenses)
+        return ids
+    }
+
+    suspend fun deleteAllExpenses() {
+        expensesLocalDataSource.deleteAllExpenses()
     }
 
     suspend fun getCategories(): List<CategoryModel> {

@@ -3,11 +3,17 @@ package com.imkaem.android.svarc.core.presentation.screens
 import CustomTabbedView
 import HomeScreenCostsActions
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -20,12 +26,11 @@ import com.imkaem.android.svarc.core.presentation.widgets.HomeScreenCurrentCosts
 @Composable
 fun HomeScreen(
     onNavigateToReports: () -> Unit,
+    onNavigateToDev: () -> Unit,
 ) {
 //    val viewModel: HomeScreenViewModel = viewModel()
     val viewModel: HomeScreenViewModel = hiltViewModel()
     val state = viewModel.state.collectAsStateWithLifecycle().value
-
-    val currentExpenses = state.currentExpenses
 
     Scaffold { padding ->
         Column(
@@ -47,15 +52,26 @@ fun HomeScreen(
                 onEditDailyBudgetEvent = viewModel::onEvent,
                 onToggleDialogEvent = viewModel::onEvent,
                 modifier = Modifier.padding(horizontal = 10.dp),
-                /* TODO temp only */
-//                selectedDate = state.selectedDate,
-//                selectedHour = state.selectedHour,
-//                selectedMinute = state.selectedMinute,
             )
 
             HorizontalDivider(
                 modifier = Modifier.padding(10.dp)
             )
+
+            Button(
+                onClick = onNavigateToDev,
+                shape = RectangleShape,
+                modifier = Modifier.fillMaxWidth().height(40.dp).padding( horizontal = 10.dp)
+            ) {
+                Text("To dev screen")
+            }
+
+
+            HorizontalDivider(
+                modifier = Modifier.padding(10.dp)
+            )
+
+
 
             CustomTabbedView(
                 currentTabIndex = state.selectedTab.index,
@@ -74,10 +90,7 @@ fun HomeScreen(
                 modifier = Modifier.padding(horizontal = 10.dp)
             )
         }
-
-
     }
-
 }
 
 

@@ -40,6 +40,25 @@ class ExpensesLocalDataSource @Inject constructor(
         return expensesWithCategories
     }
 
+    suspend fun addAllExpenses(expenseValues: List<CreateExpenseValue>): List<Long> {
+        val expenseEntities = expenseValues.map { expenseValue ->
+            ExpenseLocalEntity(
+                amount = expenseValue.amount,
+                currency = expenseValue.currency,
+                dateTimeMillis = expenseValue.dateTimeMillis,
+                description = expenseValue.description,
+                categoryId = expenseValue.categoryId,
+            )
+        }
+
+        val ids = expensesDao.addAll(expenseEntities)
+        return ids
+    }
+
+    suspend fun deleteAllExpenses() {
+        expensesDao.deleteAll()
+    }
+
     /* categories */
     suspend fun getCategories(): List<CategoryLocalEntity> {
         val categories = categoriesDao.getAll()

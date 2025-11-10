@@ -22,4 +22,13 @@ interface ExpensesDao {
 
     @Insert()
     suspend fun add(expense: ExpenseLocalEntity): Long
+
+    /* TODO I am not really sure what is this supposed to return? */
+    @Insert()
+    suspend fun addAll(expenses: List<ExpenseLocalEntity>): List<Long>
+
+    @Query("DELETE FROM expenses")
+    suspend fun deleteAll()
+
+
 }
