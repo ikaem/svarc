@@ -7,6 +7,7 @@ import com.imkaem.android.svarc.expenses.data.entities.local.CategoryLocalEntity
 import com.imkaem.android.svarc.expenses.data.entities.local.ExpenseLocalEntity
 import com.imkaem.android.svarc.expenses.data.entities.local.ExpenseWithCategoryPojo
 import com.imkaem.android.svarc.expenses.utils.values.CreateExpenseValue
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -38,6 +39,16 @@ class ExpensesLocalDataSource @Inject constructor(
     suspend fun getExpensesWithCategories(): List<ExpenseWithCategoryPojo> {
         val expensesWithCategories = expensesDao.getAllWithCategories()
         return expensesWithCategories
+    }
+
+    fun getExpensesFlow(
+        fromMillisInclusive: Long,
+        toMillisExclusive: Long,
+    ): Flow<List<ExpenseLocalEntity>> {
+        return expensesDao.getAllFromInclusiveToExclusiveFlow(
+            fromMillisInclusive = fromMillisInclusive,
+            toMillisExclusive = toMillisExclusive,
+        )
     }
 
     suspend fun addAllExpenses(expenseValues: List<CreateExpenseValue>): List<Long> {

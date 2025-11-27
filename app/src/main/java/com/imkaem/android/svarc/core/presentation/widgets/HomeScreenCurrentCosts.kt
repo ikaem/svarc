@@ -10,9 +10,8 @@ import androidx.compose.ui.unit.dp
 import com.imkaem.android.svarc.core.utils.extensions.toDayEnd
 import com.imkaem.android.svarc.core.utils.extensions.toDayStart
 import com.imkaem.android.svarc.core.utils.values.PeriodAmountValue
-import com.imkaem.android.svarc.expenses.domain.models.ExpenseModel
+import com.imkaem.android.svarc.expenses.domain.models.ExpenseWithCategoryModel
 import com.imkaem.android.svarc.expenses.utils.values.DateSpentValue
-import com.imkaem.android.svarc.ui.theme.ColorGreyLight
 import java.time.Instant
 import java.time.YearMonth
 import java.time.ZoneOffset
@@ -21,7 +20,7 @@ import java.time.ZonedDateTime
 @Composable
 fun HomeScreenCurrentCosts(
     /* TODO this is temp, ideally this should return state */
-    currentExpenses: List<ExpenseModel>,
+    currentExpenses: List<ExpenseWithCategoryModel>,
     /* TODO all of this will be removed once we move this logic to view model */
     dailyBudget: Long,
 ) {
@@ -379,7 +378,7 @@ private fun getTodayPeriodSpentValue(
 
 
 private fun convertExpensesToDateSpents(
-    monthExpenses: List<ExpenseModel>
+    monthExpenses: List<ExpenseWithCategoryModel>
     /* TODO there is a bug here, where if there is an empty list - no expenses, we will not be able to calculate spending and remainders later
     * so we will need to passy year and month here as well
     * it is future work

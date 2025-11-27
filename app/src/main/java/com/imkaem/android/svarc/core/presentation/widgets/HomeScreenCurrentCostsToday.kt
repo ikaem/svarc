@@ -23,14 +23,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imkaem.android.svarc.core.utils.values.PeriodAmountValue
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenCurrentCostsToday(
-    todayPeriodSpentValue: PeriodSpentValue?,
-    todayPeriodRemainderAmountReportValue: PeriodSpentValue?,
-    todayPeriodAccumulatedRemainderAmountReportValue: PeriodSpentValue?,
+    todayPeriodSpentValue: PeriodAmountValue?,
+    todayPeriodRemainderAmountReportValue: PeriodAmountValue?,
+    todayPeriodAccumulatedRemainderAmountReportValue: PeriodAmountValue?,
     modifier: Modifier = Modifier,
 ) {
     Column(

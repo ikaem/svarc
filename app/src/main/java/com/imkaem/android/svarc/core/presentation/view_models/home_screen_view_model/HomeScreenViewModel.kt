@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 //import com.imkaem.android.svarc.core.utils.temp.TempDI
 import com.imkaem.android.svarc.expenses.domain.models.CategoryModel
-import com.imkaem.android.svarc.expenses.domain.models.ExpenseModel
+import com.imkaem.android.svarc.expenses.domain.models.ExpenseWithCategoryModel
 import com.imkaem.android.svarc.expenses.domain.models.PeriodMonthModel
 import com.imkaem.android.svarc.expenses.domain.use_cases.CreateExpenseUseCase
 import com.imkaem.android.svarc.expenses.domain.use_cases.GetCategoriesUseCase
@@ -716,7 +716,7 @@ class HomeScreenViewModel @Inject constructor(
     /* TODO dummy use cases - will be delegated to real stuff later */
 
     /* TODO for now we return list of this month's expenses */
-    private suspend fun dummyGetCurrentExpensesUseCase(): List<ExpenseModel> {
+    private suspend fun dummyGetCurrentExpensesUseCase(): List<ExpenseWithCategoryModel> {
 
         /* so here we get this month expenses in total */
         val now = Instant.now().atZone(ZoneOffset.UTC)
@@ -987,7 +987,7 @@ class HomeScreenViewModel @Inject constructor(
         date: Long,
         hour: Int,
         minute: Int,
-    ): List<ExpenseModel> {
+    ): List<ExpenseWithCategoryModel> {
         /* TODO this will be a flow when real implementation arrives */
 
         /* TODO this is just proforma */
@@ -1007,7 +1007,7 @@ class HomeScreenViewModel @Inject constructor(
 
         val id = _state.value.expensesState.expenses.size + 1
 
-        val newExpense = ExpenseModel(
+        val newExpense = ExpenseWithCategoryModel(
 //            id = id,
             id = id.toLong(),
             amount = createExpenseValue.amount,
@@ -1022,7 +1022,7 @@ class HomeScreenViewModel @Inject constructor(
         return newExpenses
     }
 
-    private suspend fun dummyGetExpensesUseCase(): List<ExpenseModel> {
+    private suspend fun dummyGetExpensesUseCase(): List<ExpenseWithCategoryModel> {
         /* TODO this will be a flow when real implementation arrives */
 
         delay(1000)
@@ -1085,8 +1085,8 @@ class HomeScreenViewModel @Inject constructor(
 }
 
 /* TODO temp only */
-private val dummyExpenses = listOf<ExpenseModel>(
-    ExpenseModel(
+private val dummyExpenses = listOf<ExpenseWithCategoryModel>(
+    ExpenseWithCategoryModel(
         1,
         700,
         "EUR",
@@ -1094,7 +1094,7 @@ private val dummyExpenses = listOf<ExpenseModel>(
         "Some description",
         CategoryModel(1, "Health")
     ),
-    ExpenseModel(
+    ExpenseWithCategoryModel(
         2,
         1500,
         "EUR",
@@ -1102,7 +1102,7 @@ private val dummyExpenses = listOf<ExpenseModel>(
         "Some description",
         CategoryModel(2, "Home")
     ),
-    ExpenseModel(
+    ExpenseWithCategoryModel(
         3,
         500,
         "EUR",
@@ -1110,7 +1110,7 @@ private val dummyExpenses = listOf<ExpenseModel>(
         "Some description",
         CategoryModel(3, "Food")
     ),
-    ExpenseModel(
+    ExpenseWithCategoryModel(
         4,
         2000,
         "EUR",
@@ -1118,7 +1118,7 @@ private val dummyExpenses = listOf<ExpenseModel>(
         "Some description",
         CategoryModel(4, "Social")
     ),
-    ExpenseModel(
+    ExpenseWithCategoryModel(
         5,
         1200,
         "EUR",
@@ -1126,7 +1126,7 @@ private val dummyExpenses = listOf<ExpenseModel>(
         "Some description",
         CategoryModel(5, "Sport")
     ),
-    ExpenseModel(
+    ExpenseWithCategoryModel(
         6,
         300,
         "EUR",
@@ -1134,7 +1134,7 @@ private val dummyExpenses = listOf<ExpenseModel>(
         "Some description",
         CategoryModel(7, "Other")
     ),
-    ExpenseModel(
+    ExpenseWithCategoryModel(
         7,
         900,
         "EUR",
@@ -1142,7 +1142,7 @@ private val dummyExpenses = listOf<ExpenseModel>(
         "Some description",
         CategoryModel(6, "Some longer category name")
     ),
-    ExpenseModel(
+    ExpenseWithCategoryModel(
         8,
         400,
         "EUR",

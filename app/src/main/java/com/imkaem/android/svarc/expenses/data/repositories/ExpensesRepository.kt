@@ -3,7 +3,10 @@ package com.imkaem.android.svarc.expenses.data.repositories
 import com.imkaem.android.svarc.expenses.data.data_sources.ExpensesLocalDataSource
 import com.imkaem.android.svarc.expenses.domain.models.CategoryModel
 import com.imkaem.android.svarc.expenses.domain.models.ExpenseModel
+import com.imkaem.android.svarc.expenses.domain.models.ExpenseWithCategoryModel
 import com.imkaem.android.svarc.expenses.utils.values.CreateExpenseValue
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -25,13 +28,13 @@ class ExpensesRepository @Inject constructor(
         return id
     }
 
-    suspend fun getExpensesWithCategories(): List<ExpenseModel> {
+    suspend fun getExpensesWithCategories(): List<ExpenseWithCategoryModel> {
         val pojos = expensesLocalDataSource.getExpensesWithCategories()
 
         val models = pojos.map { pojo ->
             val dateTime = Instant.ofEpochMilli(pojo.expense.dateTimeMillis)
 
-            val model = ExpenseModel(
+            val model = ExpenseWithCategoryModel(
                 id = pojo.expense.id,
                 amount = pojo.expense.amount,
                 currency = pojo.expense.currency,
@@ -46,6 +49,38 @@ class ExpensesRepository @Inject constructor(
         }
 
         return models
+    }
+
+    fun getExpensesFlow(
+        fromMillisInclusive: Long,
+        toMillisExclusive: Long,
+    ): Flow<List<ExpenseModel>> {
+        val entitiesFlow = expensesLocalDataSource.getExpensesFlow(
+            fromMillisInclusive = fromMillisInclusive,
+            toMillisExclusive = toMillisExclusive,
+        )
+
+        val modelsFlow = entitiesFlow.map { entities ->
+            val models = entities.map { entity ->
+
+                val dateTime = Instant.ofEpochMilli(entity.dateTimeMillis)
+
+                val model = ExpenseModel(
+                    id = entity.id,
+                    amount = entity.amount,
+                    currency = entity.currency,
+                    dateTime = dateTime,
+                    description = entity.description,
+                    categoryId = entity.id,
+                )
+
+                model
+            }
+
+            models
+        }
+
+        return modelsFlow;
     }
 
     suspend fun addAllExpenses(expenses: List<CreateExpenseValue>): List<Long> {

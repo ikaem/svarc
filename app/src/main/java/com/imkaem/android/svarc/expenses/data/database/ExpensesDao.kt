@@ -6,9 +6,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.imkaem.android.svarc.expenses.data.entities.local.ExpenseLocalEntity
 import com.imkaem.android.svarc.expenses.data.entities.local.ExpenseWithCategoryPojo
-
-
-
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -21,7 +19,11 @@ interface ExpensesDao {
     @Query("SELECT * FROM expenses ORDER BY date_time_millis ASC")
     suspend fun getAllWithCategories(): List<ExpenseWithCategoryPojo>
 
-
+    @Query("SELECT * FROM expenses WHERE date_time_millis >= :fromMillisInclusive AND date_time_millis < :toMillisExclusive ORDER BY date_time_millis ASC")
+    fun getAllFromInclusiveToExclusiveFlow(
+        fromMillisInclusive: Long,
+        toMillisExclusive: Long,
+    ): Flow<List<ExpenseLocalEntity>>
 
 
     @Insert()

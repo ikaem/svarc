@@ -20,13 +20,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.imkaem.android.svarc.expenses.domain.models.ExpenseModel
+import com.imkaem.android.svarc.expenses.domain.models.ExpenseWithCategoryModel
 import com.imkaem.android.svarc.ui.theme.ColorGreyLight
 import com.imkaem.android.svarc.ui.theme.ColorGreyLighter
 
 @Composable
 fun ExpenseBrief(
-    expense: ExpenseModel,
+    expense: ExpenseWithCategoryModel,
     modifier: Modifier = Modifier,
 ) {
 

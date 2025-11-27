@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imkaem.android.svarc.core.utils.values.PeriodAmountValue
 import com.imkaem.android.svarc.ui.theme.ColorGreyDark
 import com.imkaem.android.svarc.ui.theme.ColorGreyLighter
 import java.util.Locale
@@ -25,8 +26,8 @@ import java.util.Locale
 @Composable
 fun HomeScreenCurrentCostsPeriod(
     periodLabel: String,
-    periodSpentValue: PeriodSpentValue?,
-    periodRemainderAmountReportValue: PeriodSpentValue?,
+    periodSpentValue: PeriodAmountValue?,
+    periodRemainderAmountReportValue: PeriodAmountValue?,
     modifier: Modifier = Modifier,
     backgroundColor: Color = ColorGreyLighter,
 ) {

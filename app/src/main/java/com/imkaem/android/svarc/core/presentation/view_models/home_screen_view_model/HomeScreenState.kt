@@ -1,13 +1,13 @@
 package com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model
 
 import com.imkaem.android.svarc.expenses.domain.models.CategoryModel
-import com.imkaem.android.svarc.expenses.domain.models.ExpenseModel
+import com.imkaem.android.svarc.expenses.domain.models.ExpenseWithCategoryModel
 import com.imkaem.android.svarc.expenses.domain.models.PeriodMonthModel
 
 data class HomeScreenState(
     /* for main screen current tab */
     /* TODO we are missing current month daily budget state */
-    val currentExpenses: List<ExpenseModel>,
+    val currentExpenses: List<ExpenseWithCategoryModel>,
     val addExpenseState: HomeScreenAddExpenseState,
     val expensesState: HomeScreenExpensesState,
     val addCategoryState: HomeScreenAddCategoryState,
@@ -53,7 +53,7 @@ data class HomeScreenAddExpenseState(
 
 
 data class HomeScreenExpensesState(
-    val expenses: List<ExpenseModel>,
+    val expenses: List<ExpenseWithCategoryModel>,
     /* TODO will need pagination info */
     val isLoading: Boolean,
     val error: String? = null,

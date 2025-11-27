@@ -8,12 +8,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.imkaem.android.svarc.expenses.domain.models.ExpenseModel
+import com.imkaem.android.svarc.expenses.domain.models.ExpenseWithCategoryModel
 import com.imkaem.android.svarc.expenses.presentation.widgets.ExpenseBrief
 
 @Composable
 fun HomeScreenAllExpenses(
-    expenses: List<ExpenseModel>
+    expenses: List<ExpenseWithCategoryModel>
 ) {
     Column(
         modifier = Modifier
