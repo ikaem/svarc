@@ -15,6 +15,16 @@ android {
     namespace = "com.imkaem.android.svarc"
     compileSdk = 36
 
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform() // This enables JUnit 5 for unit tests
+        }
+    }
+
+
+
+
+
     room {
         schemaDirectory("$projectDir/schemas")
     }
@@ -58,7 +68,17 @@ android {
 dependencies {
     /* mockk */
     testImplementation(libs.mockk)
+//    testImplementation(libs.junit.jupiter)
+//    testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.3")
+//    testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.3")  // For parameterized tests
+//    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.3")
+//    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.3")
+
     testImplementation(libs.junit.jupiter)
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.params)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
     androidTestImplementation(libs.mockk.android)
     testImplementation(libs.coroutines.test)
     /* hilt */

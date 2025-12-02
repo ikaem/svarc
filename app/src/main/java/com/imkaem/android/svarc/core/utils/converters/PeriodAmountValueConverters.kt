@@ -9,7 +9,27 @@ import java.util.Locale
 
 class PeriodAmountValueConverters {
     companion object {
-        fun fromMonthExpenseModelsToDatePeriodAmountValue(
+
+        fun fromMonthExpensesToDatePeriodAmountRemainderValue(
+            expenses: List<ExpenseModel>,
+            date: Instant,
+            dailyBudget: Long,
+        ): PeriodAmountValue {
+            val todaySpentValue = fromMonthExpensesToDatePeriodAmountSpentValue(
+                expenses,
+                date,
+            )
+
+            val remainder = dailyBudget - todaySpentValue.amount
+
+            val remainderValue = todaySpentValue.copy(
+                amount = remainder
+            )
+
+            return remainderValue
+        }
+
+        fun fromMonthExpensesToDatePeriodAmountSpentValue(
             expenses: List<ExpenseModel>,
             date: Instant,
         ): PeriodAmountValue {
