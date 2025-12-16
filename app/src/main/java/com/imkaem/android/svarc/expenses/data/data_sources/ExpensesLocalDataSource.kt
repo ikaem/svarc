@@ -2,10 +2,13 @@ package com.imkaem.android.svarc.expenses.data.data_sources
 
 import android.util.Log
 import com.imkaem.android.svarc.expenses.data.database.CategoriesDao
+import com.imkaem.android.svarc.expenses.data.database.DailyBudgetsDao
 import com.imkaem.android.svarc.expenses.data.database.ExpensesDao
 import com.imkaem.android.svarc.expenses.data.entities.local.CategoryLocalEntity
+import com.imkaem.android.svarc.expenses.data.entities.local.DailyBudgetEntity
 import com.imkaem.android.svarc.expenses.data.entities.local.ExpenseLocalEntity
 import com.imkaem.android.svarc.expenses.data.entities.local.ExpenseWithCategoryPojo
+import com.imkaem.android.svarc.expenses.utils.values.CreateDailyBudgetValue
 import com.imkaem.android.svarc.expenses.utils.values.CreateExpenseValue
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -17,6 +20,7 @@ import javax.inject.Singleton
 class ExpensesLocalDataSource @Inject constructor(
     private val expensesDao: ExpensesDao,
     private val categoriesDao: CategoriesDao,
+    private val dailyBudgetsDao: DailyBudgetsDao,
 ) {
 
     /* expenses */
@@ -75,5 +79,34 @@ class ExpensesLocalDataSource @Inject constructor(
         val categories = categoriesDao.getAll()
         return categories
     }
+
+    /* daily budgets */
+    suspend fun addDailyBudget(dailyBudgetValue: CreateDailyBudgetValue): Long {
+        val dailyBudgetEntity = com.imkaem.android.svarc.expenses.data.entities.local.DailyBudgetEntity(
+            amount = dailyBudgetValue.amount,
+            year = dailyBudgetValue.year,
+            month = dailyBudgetValue.month,
+        )
+
+        val id = dailyBudgetsDao.add(dailyBudgetEntity)
+
+        Log.d("ExpensesLocalDataSource", "Added daily budget with id: $id")
+
+        return id
+    }
+
+    fun getDailyBudgetById(id: Long): Flow<DailyBudgetEntity?> {
+        return dailyBudgetsDao.getOneByIdFlow(id)
+    }
+
+    fun getDailyBudgetByYearMonth(year: Int, month: Int): Flow<DailyBudgetEntity?> {
+        return dailyBudgetsDao.getOneByYearMonthFlow(year, month)
+    }
+
+    suspend fun deleteAllDailyBudgets() {
+        dailyBudgetsDao.deleteAll()
+    }
+
+
 }
 

@@ -2,8 +2,10 @@ package com.imkaem.android.svarc.expenses.data.repositories
 
 import com.imkaem.android.svarc.expenses.data.data_sources.ExpensesLocalDataSource
 import com.imkaem.android.svarc.expenses.domain.models.CategoryModel
+import com.imkaem.android.svarc.expenses.domain.models.DailyBudgetModel
 import com.imkaem.android.svarc.expenses.domain.models.ExpenseModel
 import com.imkaem.android.svarc.expenses.domain.models.ExpenseWithCategoryModel
+import com.imkaem.android.svarc.expenses.utils.values.CreateDailyBudgetValue
 import com.imkaem.android.svarc.expenses.utils.values.CreateExpenseValue
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -104,5 +106,54 @@ class ExpensesRepository @Inject constructor(
         }
 
         return models
+    }
+
+    /* daily budgets */
+    suspend fun addDailyBudget(dailyBudgetValue: CreateDailyBudgetValue): Long {
+        val id = expensesLocalDataSource.addDailyBudget(
+            dailyBudgetValue = dailyBudgetValue
+        )
+
+        return id
+    }
+
+    fun getDailyBudgetByIdFlow(id: Long): Flow<DailyBudgetModel?> {
+        /* TODO create some converter */
+        val entityFlow = expensesLocalDataSource.getDailyBudgetById(id)
+
+        val modelFlow = entityFlow.map { entity ->
+            entity?.let {
+                DailyBudgetModel(
+                    id = it.id,
+                    amount = it.amount,
+                    year = it.year,
+                    month = it.month,
+                )
+            }
+        }
+
+        return modelFlow
+    }
+
+    fun getDailyBudgetByYearMonthFlow(year: Int, month: Int): Flow<DailyBudgetModel?> {
+        /* TODO create some converter */
+        val entityFlow = expensesLocalDataSource.getDailyBudgetByYearMonth(year, month)
+
+        val modelFlow = entityFlow.map { entity ->
+            entity?.let {
+                DailyBudgetModel(
+                    id = it.id,
+                    amount = it.amount,
+                    year = it.year,
+                    month = it.month,
+                )
+            }
+        }
+
+        return modelFlow
+    }
+
+    suspend fun deleteAllDailyBudgets() {
+        expensesLocalDataSource.deleteAllDailyBudgets()
     }
 }

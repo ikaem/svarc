@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.room.util.TableInfo
+import com.imkaem.android.svarc.dev.presentation.view_models.dev_screen_view_model.DevScreenDailyBudgetsEvent
 import com.imkaem.android.svarc.dev.presentation.view_models.dev_screen_view_model.DevScreenExpensesEvent
 import com.imkaem.android.svarc.dev.presentation.view_models.dev_screen_view_model.DevScreenViewModel
 
@@ -64,36 +65,77 @@ fun DevScreen(
             )
         ) {
 
-            Button(
-                onClick = {
-                    viewModel.onEvent(DevScreenExpensesEvent.AddDummyExpenses)
-                },
-                shape = RectangleShape,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Add expenses to DB")
-            }
-            if (state.value.expensesState.isLoadingAddDummyExpenses) {
-                LinearProgressIndicator(
+            Column {
+                Button(
+                    onClick = {
+                        viewModel.onEvent(DevScreenExpensesEvent.AddDummyExpenses)
+                    },
+                    shape = RectangleShape,
                     modifier = Modifier.fillMaxWidth()
-                )
+                ) {
+                    Text("Add expenses to DB")
+                }
+                if (state.value.expensesState.isLoadingAddDummyExpenses) {
+                    LinearProgressIndicator(
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                Spacer(Modifier.height(5.dp))
+
+                Button(
+                    onClick = {
+                        viewModel.onEvent(DevScreenExpensesEvent.DeleteAllExpenses)
+                    },
+                    shape = RectangleShape,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Delete all expenses from DB")
+                }
+                if (state.value.expensesState.isLoadingDeleteAllExpenses) {
+                    LinearProgressIndicator(
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
 
-            Spacer(Modifier.height(20.dp))
+            HorizontalDivider(
+                thickness = 2.dp,
+                modifier = Modifier.padding(vertical = 10.dp)
+            )
 
-            Button(
-                onClick = {
-                    viewModel.onEvent(DevScreenExpensesEvent.DeleteAllExpenses)
-                },
-                shape = RectangleShape,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Delete all expenses from DB")
-            }
-            if (state.value.expensesState.isLoadingDeleteAllExpenses) {
-                LinearProgressIndicator(
+            Column {
+                Button(
+                    onClick = {
+                        viewModel.onEvent(DevScreenDailyBudgetsEvent.AddDummyDailyBudgets)
+                    },
+                    shape = RectangleShape,
                     modifier = Modifier.fillMaxWidth()
-                )
+                ) {
+                    Text("Add daily budgets to DB")
+                }
+                if (state.value.dailyBudgetsState.isLoadingAddDummyDailyBudgets) {
+                    LinearProgressIndicator(
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                Spacer(Modifier.height(5.dp))
+
+                Button(
+                    onClick = {
+                        viewModel.onEvent(DevScreenDailyBudgetsEvent.DeleteAllDailyBudgets)
+                    },
+                    shape = RectangleShape,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Delete all daily budgets from DB")
+                }
+                if (state.value.dailyBudgetsState.isLoadingDeleteAllDailyBudgets) {
+                    LinearProgressIndicator(
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         }
     }

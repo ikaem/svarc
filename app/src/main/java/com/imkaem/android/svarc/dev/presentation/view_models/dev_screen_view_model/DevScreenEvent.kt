@@ -9,3 +9,8 @@ sealed class DevScreenExpensesEvent: DevScreenEvent() {
     object AddDummyExpenses: DevScreenExpensesEvent()
     object DeleteAllExpenses: DevScreenExpensesEvent()
 }
+
+sealed class DevScreenDailyBudgetsEvent: DevScreenEvent() {
+    object AddDummyDailyBudgets: DevScreenDailyBudgetsEvent()
+    object DeleteAllDailyBudgets: DevScreenDailyBudgetsEvent()
+}

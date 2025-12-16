@@ -11,5 +11,10 @@
 6. also, question is, do we need cancel previous collecting when daily budget changes? or do we just let it run and update state whenever reports are fetched? i am not sure how it works with android jetpack compose. maybe it automatically cancels previous collecting when new collecting is started? not sure. i thing there was some cancelation of coroutine or scope - there is some kind of mecahnism for that
 
 ----------
-1. lets create entity for daily budget
-- maybe we can also store date added. so we can always 
+1. ~~lets create entity for daily budget
+- maybe we can also store date added. so we can always~~
+2. now need use case to get daily budget for current month
+- this is in home screen view model then used 
+- and should have state, and set it, for current daily budget
+- note that it could be null if not set yet
+-- then we should show some UI to set it

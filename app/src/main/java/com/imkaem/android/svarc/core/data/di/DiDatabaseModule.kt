@@ -7,6 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.imkaem.android.svarc.core.data.database.SvarcDatabase
 import com.imkaem.android.svarc.core.data.database.migration_1_2
 import com.imkaem.android.svarc.expenses.data.database.CategoriesDao
+import com.imkaem.android.svarc.expenses.data.database.DailyBudgetsDao
 import com.imkaem.android.svarc.expenses.data.database.ExpensesDao
 import dagger.Module
 import dagger.Provides
@@ -28,6 +29,11 @@ object DiDatabaseModule {
     @Provides
     fun provideCategoriesDao(database: SvarcDatabase): CategoriesDao {
         return database.categoriesDao
+    }
+
+    @Provides
+    fun provideDailyBudgetsDao(database: SvarcDatabase): DailyBudgetsDao {
+        return database.dailyBudgetsDao
     }
 
 
