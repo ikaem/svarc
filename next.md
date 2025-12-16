@@ -1,59 +1,15 @@
-1. ok, need use case to getCurrentExpenses
-   2. so it would get current expenses for this month i guess 
-   3. but it will get it as a flow of list of expenses
-   4. maybe then it can convert to flow of object that holds current expenses:
-        5. total for today
-        7. total for this month
-      8. which view model can observe, and update ui state
-         9. question here, is it ok to have use case retrun (flow of) objects that are state?
-            10. so it would be holding three PeriodSpentValues - spent, remainder, accumulated remainder for today 
-            11. it would hold spent, month budget, remainder for month
-                12. so what are these classes? ui state classes? or domain classes? i guess they are state classes, because they will be rendered directly in ui
-13. ok, so
-    14. add use case 
-    15. add data source, repo, dao
-    16. make use case convert all expenses from this month to these values 
-        17. we need to have some kind of wrappear class as well - to make sure we can emit both od period values together
-2. 
-3. -----------------------------
-4. lets add button do add or delete all expenses
-   2. this is for testing purpose
-   3. lets add a view model for this 
-      4. it will have to use cases - add dummy expenses, delete all expenses
-      5. also will be two data source methods, and two repository methods
+1. need to define state that will hold current reports
+2. need to actually set this state when reports are fetched
+3. need to create table for daily budget
+- no idea how will daily budget look like. i guess we do daily budget for entire month. so we would store year, month, daily budget amount?
+4. need to trigger collect on reports whenever daily budget is changed
+- which means that we need to store daily budget in some kidn of flow in view model, and then subscrtibe ot it? maybe curret state flow does it already? not sure
+5. does collecting reports every time daily budget changes make sense? maybe we should just collect reports once, and then whenever daily budget changes we just recalculate something?
+- maybe. so maybe use case would actually return expenses for day, and set them in private state somewhere. then whenever daily budget changes we would recalculate remaining budget for day?
+- ofc, we would still be subscribing to collecting expenses for day, so if expenses change we would also recalculate remaining budget for day. but we would only be fetching reports once day changes 
+- the results is the same, but we would be doing less work when daily budget changes. we would just recalculate remaining budget instead of collecting reports again
+6. also, question is, do we need cancel previous collecting when daily budget changes? or do we just let it run and update state whenever reports are fetched? i am not sure how it works with android jetpack compose. maybe it automatically cancels previous collecting when new collecting is started? not sure. i thing there was some cancelation of coroutine or scope - there is some kind of mecahnism for that
 
-2. add a new screen, called DevScreen
-   3. inside, add buttons to add dummy expenses, and delete all expenses
-   4. will need dummyScreenViewModel
-      5. which uses these use cases
---------------
-
-
-
-3. figure out how to
-   2. get actual category together with expense
-      3. do we manually have to join, or room will join automatically when foreign key is set
-2. forget all of these converters and shit - lets just convert in ui for now
-2. ------
-2. 
-3. 
-4. we actually need to pass all expenses to all expeses tab
-2. and we need to calcluate today and this week expenses, and pass them to current expenses tab
-- view model should calculate that i guess
-3. add dummy use case to submit new expenses
-- need some value class for that 
-2. add database
-- first add dummy DI
-- then create view models and some logic to add and retrieve expenses, very simple way
-2. add hilt
-- use hilt for database and rest
-
-# thoughts
-maybe costs is not a greate name for feature layer? maybe expenses is better?
-
-
-
-3. resources for join db - leave here 
-   4. https://medium.com/android-news/android-architecture-components-room-relationships-bf473510c14a
-   5. https://proandroiddev.com/room-database-lessons-learnt-from-working-with-multiple-tables-d499c9be94ce
-   6. https://medium.com/@manishkumar_75473/android-room-database-series-part-3-relationship-a-note-taking-example-c96fc25284e9
+----------
+1. lets create entity for daily budget
+- maybe we can also store date added. so we can always 

@@ -1,5 +1,7 @@
 package com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model
 
+import com.imkaem.android.svarc.core.utils.values.ThisMonthPeriodAmountValues
+import com.imkaem.android.svarc.core.utils.values.TodayPeriodAmountValues
 import com.imkaem.android.svarc.expenses.domain.models.CategoryModel
 import com.imkaem.android.svarc.expenses.domain.models.ExpenseWithCategoryModel
 import com.imkaem.android.svarc.expenses.domain.models.PeriodMonthModel
@@ -7,7 +9,10 @@ import com.imkaem.android.svarc.expenses.domain.models.PeriodMonthModel
 data class HomeScreenState(
     /* for main screen current tab */
     /* TODO we are missing current month daily budget state */
-    val currentExpenses: List<ExpenseWithCategoryModel>,
+
+    /* TODO these are old, might need to be reworked? */
+    val expensesReportsState: HomeScreenExpensesReportsState,
+    val currentExpenses: List<ExpenseWithCategoryModel>, // this i am not sure we should call current expeses - these should probably be all expenese
     val addExpenseState: HomeScreenAddExpenseState,
     val expensesState: HomeScreenExpensesState,
     val addCategoryState: HomeScreenAddCategoryState,
@@ -26,6 +31,15 @@ data class HomeScreenState(
 
     /* TODO we will be adding other states, like home screen costs and edit daily budget and so on... */
 )
+
+data class HomeScreenExpensesReportsState(
+    val todayReports: TodayPeriodAmountValues?,
+    val thisMonthReports: ThisMonthPeriodAmountValues?,
+    val isLoading: Boolean,
+    val error: String? = null,
+)
+
+
 
 data class HomeScreenMonthPeriodsState(
     val periods: List<PeriodMonthModel>,

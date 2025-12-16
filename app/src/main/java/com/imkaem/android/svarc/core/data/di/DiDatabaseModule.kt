@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.imkaem.android.svarc.core.data.database.SvarcDatabase
+import com.imkaem.android.svarc.core.data.database.migration_1_2
 import com.imkaem.android.svarc.expenses.data.database.CategoriesDao
 import com.imkaem.android.svarc.expenses.data.database.ExpensesDao
 import dagger.Module
@@ -48,6 +49,7 @@ object DiDatabaseModule {
 //            )
             .addMigrations(
                 /* no migrations as of yet */
+                migration_1_2,
             )
             /* TODO testing this */
             .addCallback(object : RoomDatabase.Callback() {

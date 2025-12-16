@@ -1,5 +1,6 @@
 package com.imkaem.android.svarc.core.presentation.view_models.home_screen_view_model
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 //import com.imkaem.android.svarc.core.utils.temp.TempDI
@@ -9,6 +10,7 @@ import com.imkaem.android.svarc.expenses.domain.models.PeriodMonthModel
 import com.imkaem.android.svarc.expenses.domain.use_cases.CreateExpenseUseCase
 import com.imkaem.android.svarc.expenses.domain.use_cases.GetCategoriesUseCase
 import com.imkaem.android.svarc.expenses.domain.use_cases.GetExpensesWithCategoriesUseCase
+import com.imkaem.android.svarc.expenses.domain.use_cases.GetPeriodExpensesReportsUseCase
 import com.imkaem.android.svarc.expenses.utils.values.CreateExpenseValue
 import com.imkaem.android.svarc.expenses.utils.values.DateSpentValue
 import com.imkaem.android.svarc.reports.utils.temp.TempDateSpentsGenerator
@@ -38,7 +40,8 @@ import javax.inject.Inject
 class HomeScreenViewModel @Inject constructor(
     private val createExpenseUseCase: CreateExpenseUseCase,
     private val getCategoriesUseCase: GetCategoriesUseCase,
-    private val getExpensesWithCategoriesUseCase: GetExpensesWithCategoriesUseCase
+    private val getExpensesWithCategoriesUseCase: GetExpensesWithCategoriesUseCase,
+    private val getPeriodExpensesReportsUseCase: GetPeriodExpensesReportsUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<HomeScreenState>(
@@ -514,6 +517,14 @@ class HomeScreenViewModel @Inject constructor(
 
 
         return HomeScreenState(
+            /* these are reports - we will see how this goes */
+            expensesReportsState = HomeScreenExpensesReportsState(
+                isLoading = true,
+                error = null,
+                todayReports = null,
+                thisMonthReports = null,
+            ),
+
             currentExpenses = emptyList(),
             /* TODO just separator to remind that this above needs to be a real state */
             expensesState = HomeScreenExpensesState(
@@ -609,108 +620,136 @@ class HomeScreenViewModel @Inject constructor(
         /* TODO maybe should be passing io dispatcher and adding explict error handler here */
         /* TODO this should be separated i guess, as per comment and link at the top of this file */
 //        val categories = dummyGetCategoriesUseCase()
-        /* TODO temp only tis */
-        val categories = getCategoriesUseCase()
-//        val expenses = dummyGetExpensesUseCase()
-        val monthPeriods = dummyGetMonthPeriodsUseCase()
 
-        val realExpensesWithCategories = getExpensesWithCategoriesUseCase()
+        /* i am not sure if this is ok to do - we might be updated state on miltiple occasions - but maybe it is ok */
+        /* i guess we should retrieve daily budget, but also kinda track it? or at least retrigger this when */
 
-        /* TODO temp */
-        val currentExpenses = dummyGetCurrentExpensesUseCase()
+        /* i guess we should have a flow that tracks daily budget -> i guess it will set state somehow
+        * then, we need to subscribe to its changes, and then we should trigger collecting of reports with that budget here
+        *
+        * also, can we subscribe to changes in date. if so, we should also retrigger reports when date changes
+        * */
+        /* TODO extract this
+        * to be called by other methods, when daily budget or date changes
+        * we can track changes in date by having a ticker each second? and check if current time is 1 day after last checked time - and we set new time
+        * do we need
+        *  */
+        val now = Instant.now()
+        val budget = 700L
+        getPeriodExpensesReportsUseCase(
+            date = now,
+            dailyBudget = budget,
+        ).collect { periodsAmountValues ->
 
-        val categoriesState = HomeScreenCategoriesState(
-            categories = categories,
-            isLoading = false,
-            error = null,
-        )
-
-        val expensesState = HomeScreenExpensesState(
-            expenses = realExpensesWithCategories,
-            isLoading = false,
-            error = null,
-        )
-
-        val monthPeriodsState = HomeScreenMonthPeriodsState(
-            periods = monthPeriods,
-            isLoading = false,
-            error = null,
-        )
-
-        val addCategoryState = HomeScreenAddCategoryState(
-            data = HomeScreenAddCategoryStateData(
-                name = ""
-            ),
-            isLoading = false,
-            error = null,
-        )
-
-        val addExpenseState = _state.value.addExpenseState.copy(
-            data = _state.value.addExpenseState.data.copy(
-                categoryId = categories.firstOrNull()?.id,
-            ),
-            isLoading = false,
-            error = null,
-        )
-
-//        val addExpensesState = HomeScreenAddExpenseState(
-//            /* TODO this should be populated only on open of dialog - lets take care of it later */
-//            data = _state.value.addExpenseState.data.copy(
-////                addExpenseState = _state.value.addExpenseState.copy(
-////                    data = _state.value.addExpenseState.data.copy(
-////                        categoryId = categories.firstOrNull()?.id,
-////                    )
-////                )
-//            ),
-//            isLoading = _state.value.addExpenseState.
-////            data = HomeScreenAddExpenseStateData(
-////                amount = null,
-////                /* TODO lets set first as default */
-////                categoryId = categories.firstOrNull()?.id,
-////                description = "",
-////                /* TODO this needs to be adjusted so it initially shows now date and time
-////                * will be handling this a bit later
-////                * */
-//////                date = "",
-//////                time = "",
-////            ),
-////            isLoading = false,
-////            error = null,
-//        )
-
-        val editDailyBudgetState = HomeScreenEditDailyBudgetState(
-            data = HomeScreenEditDailyBudgetStateData(
-                selectedMonthPeriod = monthPeriods.lastOrNull(),
-                selectedMonthPeriodDailyBudgetValue = monthPeriods.lastOrNull()?.amount.toString(),
-            ),
-            isLoading = false,
-            error = null,
-        )
-
-        val selectedTab = _state.value.selectedTab
-        val timePickerDialogState = _state.value.timePickerDialogState
-        val datePickerDialogState = _state.value.datePickerDialogState
-        val categoryPickerDialogState = _state.value.categoryPickerDialogState
+            Log.d("HomeScreenViewModel", "reports collected")
 
 
-        val newState = _state.value.copy(
-            /* TODO temp */
-            currentExpenses = currentExpenses,
-            expensesState = expensesState,
-            categoriesState = categoriesState,
-            monthPeriodsState = monthPeriodsState,
-            addExpenseState = addExpenseState,
-            addCategoryState = addCategoryState,
-            editDailyBudgetState = editDailyBudgetState,
-            selectedTab = selectedTab,
-            timePickerDialogState = timePickerDialogState,
-            datePickerDialogState = datePickerDialogState,
-            categoryPickerDialogState = categoryPickerDialogState,
-        )
-
-        _state.update {
-            newState
         }
+
+        /////////////// --> from here disabled for now <--- //////////////////
+//        /* TODO temp only tis */
+//        val categories = getCategoriesUseCase()
+////        val expenses = dummyGetExpensesUseCase()
+//        val monthPeriods = dummyGetMonthPeriodsUseCase()
+//
+//        val realExpensesWithCategories = getExpensesWithCategoriesUseCase()
+//
+//        /* TODO temp */
+//        val currentExpenses = dummyGetCurrentExpensesUseCase()
+//
+//        val categoriesState = HomeScreenCategoriesState(
+//            categories = categories,
+//            isLoading = false,
+//            error = null,
+//        )
+//
+//        val expensesState = HomeScreenExpensesState(
+//            expenses = realExpensesWithCategories,
+//            isLoading = false,
+//            error = null,
+//        )
+//
+//        val monthPeriodsState = HomeScreenMonthPeriodsState(
+//            periods = monthPeriods,
+//            isLoading = false,
+//            error = null,
+//        )
+//
+//        val addCategoryState = HomeScreenAddCategoryState(
+//            data = HomeScreenAddCategoryStateData(
+//                name = ""
+//            ),
+//            isLoading = false,
+//            error = null,
+//        )
+//
+//        val addExpenseState = _state.value.addExpenseState.copy(
+//            data = _state.value.addExpenseState.data.copy(
+//                categoryId = categories.firstOrNull()?.id,
+//            ),
+//            isLoading = false,
+//            error = null,
+//        )
+//
+////        val addExpensesState = HomeScreenAddExpenseState(
+////            /* TODO this should be populated only on open of dialog - lets take care of it later */
+////            data = _state.value.addExpenseState.data.copy(
+//////                addExpenseState = _state.value.addExpenseState.copy(
+//////                    data = _state.value.addExpenseState.data.copy(
+//////                        categoryId = categories.firstOrNull()?.id,
+//////                    )
+//////                )
+////            ),
+////            isLoading = _state.value.addExpenseState.
+//////            data = HomeScreenAddExpenseStateData(
+//////                amount = null,
+//////                /* TODO lets set first as default */
+//////                categoryId = categories.firstOrNull()?.id,
+//////                description = "",
+//////                /* TODO this needs to be adjusted so it initially shows now date and time
+//////                * will be handling this a bit later
+//////                * */
+////////                date = "",
+////////                time = "",
+//////            ),
+//////            isLoading = false,
+//////            error = null,
+////        )
+//
+//        val editDailyBudgetState = HomeScreenEditDailyBudgetState(
+//            data = HomeScreenEditDailyBudgetStateData(
+//                selectedMonthPeriod = monthPeriods.lastOrNull(),
+//                selectedMonthPeriodDailyBudgetValue = monthPeriods.lastOrNull()?.amount.toString(),
+//            ),
+//            isLoading = false,
+//            error = null,
+//        )
+//
+//        val selectedTab = _state.value.selectedTab
+//        val timePickerDialogState = _state.value.timePickerDialogState
+//        val datePickerDialogState = _state.value.datePickerDialogState
+//        val categoryPickerDialogState = _state.value.categoryPickerDialogState
+//
+//
+//        val newState = _state.value.copy(
+//            /* TODO temp */
+//            currentExpenses = currentExpenses,
+//            expensesState = expensesState,
+//            categoriesState = categoriesState,
+//            monthPeriodsState = monthPeriodsState,
+//            addExpenseState = addExpenseState,
+//            addCategoryState = addCategoryState,
+//            editDailyBudgetState = editDailyBudgetState,
+//            selectedTab = selectedTab,
+//            timePickerDialogState = timePickerDialogState,
+//            datePickerDialogState = datePickerDialogState,
+//            categoryPickerDialogState = categoryPickerDialogState,
+//        )
+//
+//        _state.update {
+//            newState
+//        }
+//        //////////// -> to here disabled for now <- ///////////////
     }
 
     /* TODO dummy use cases - will be delegated to real stuff later */
